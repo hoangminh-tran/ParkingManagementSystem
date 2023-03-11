@@ -41,6 +41,10 @@ public class Booking {
     @JoinColumn(name = "Id_Customer")
     private Customer customer;
 
+    private boolean is_deleted;
+
+    private boolean is_enabled;
+
     public Booking(Long id_Booking, Date startDate, Date endDate, String startTime, String endTime, Customer_Slot customer_slot, Customer customer) {
         this.Id_Booking = id_Booking;
         this.startDate = startDate;
@@ -49,6 +53,9 @@ public class Booking {
         this.endTime = endTime;
         this.customer_slot = customer_slot;
         this.customer = customer;
+        is_deleted = false;
+        is_enabled = true;
+
     }
 
     @OneToOne(mappedBy = "booking")

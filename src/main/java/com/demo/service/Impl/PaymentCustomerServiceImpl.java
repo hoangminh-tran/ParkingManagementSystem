@@ -99,21 +99,6 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public String CancelPayment(CancelPaymentDTO dto) {
-        Booking booking = bookingRepository.findById(dto.getId_Booking()).get();
-        Customer customer = customerRepository.findById(booking.getCustomer().getIdUser()).get();
-        customer.setCancel_of_payments(customer.getCancel_of_payments() + 1);
-        customerRepository.save(customer);
-
-        invoice_c_repository.deleteById(dto.getId_C_Invoice());
-
-        payment_c_repository.deleteById(dto.getId_Payment());
-
-        bookingRepository.deleteById(dto.getId_Booking());
-        return "Cancel Payment Successfully";
-    }
-
-    @Override
     public PaymentCustomerReponseDTO findPayment() {
         return paymentReponseDTO;
     }

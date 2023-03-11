@@ -36,11 +36,4 @@ public class PaymentCustomerController {
     {
         return new ResponseEntity<>(paymentCustomerService.findPayment(), HttpStatus.OK);
     }
-
-    @DeleteMapping("/cancelPayment")
-    public ResponseEntity<String> delete(@RequestBody String json) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        CancelPaymentDTO dto = mapper.readValue(json, CancelPaymentDTO.class);
-        return new ResponseEntity<>(paymentCustomerService.CancelPayment(dto), HttpStatus.OK);
-    }
 }

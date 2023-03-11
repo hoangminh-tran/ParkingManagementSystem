@@ -11,5 +11,4 @@ public interface PaymentCustomerService {
 
     PaymentCustomerReponseDTO UpdateTypeOfPayment(PaymentCustomerReponseDTO dto);
 
-    String CancelPayment(CancelPaymentDTO dto);
 }

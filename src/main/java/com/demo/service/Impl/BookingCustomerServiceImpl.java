@@ -8,6 +8,7 @@ import com.demo.utils.request.BookingAPI;
 import com.demo.utils.request.BookingCustomerDTO;
 import com.demo.utils.request.BookingDTO;
 import com.demo.utils.response.BookingCustomerResponseDTO;
+import com.demo.utils.response.CancelBookingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,5 +81,38 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
         Booking booking = bookingRepository.findById(id).get();
         return new BookingAPI(booking.getId_Booking(), booking.getStartDate(), booking.getEndDate(), booking.getStartTime(),
                 booking.getEndTime(), booking.getCustomer().getIdUser(), customer_slot_repository.findById(booking.getCustomer_slot().getIndex()).get().getId_C_Slot());
+    }
+
+    @Override
+    public String cancelBookingCustomer(CancelBookingDTO dto) {
+        //Update Status Slot
+        Customer_Slot customerSlot = customer_slot_repository.findCustomerSlot(dto.getId_C_slot(), dto.getId_Building());
+        customerSlot.setStatus_Slots(false);
+        customer_slot_repository.save(customerSlot);
+
+        //Update the Cancel Booking of Customer
+        User user = userRepository.findById(dto.getId_Customer()).get();
+        Customer customer = customerRepository.findById(dto.getId_Customer()).get();
+        customer.setCancel_of_payments(customer.getCancel_of_payments() + 1);
+
+        String message = "Delete Successfully";
+
+        if(customer.getCancel_of_payments() == 4) // Send notification if cancel booking == 4
+        {
+            message = "Cancel Booking 4 times";
+        }
+        else if(customer.getCancel_of_payments() + 1 >= 5) // Ban Account if cancel booking == 5
+        {
+            message = "Ban Customer";
+            customer.setStatus_Account(false);
+        }
+        customerRepository.save(customer);
+
+        //Delete the booking in the DB
+        Booking booking = bookingRepository.findById(dto.getId_booking()).get();
+        booking.set_deleted(true);
+        booking.set_enabled(false);
+        bookingRepository.save(booking);
+        return message;
     }
 }

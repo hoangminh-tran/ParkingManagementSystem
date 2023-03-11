@@ -4,6 +4,7 @@ import com.demo.service.BookingCustomerService;
 import com.demo.utils.request.BookingCustomerDTO;
 import com.demo.utils.response.AreaResponseDTO;
 import com.demo.utils.response.BookingCustomerResponseDTO;
+import com.demo.utils.response.CancelBookingDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,13 @@ public class BookingCustomerController {
     public ResponseEntity<BookingCustomerResponseDTO> findBooking()
     {
         return new ResponseEntity<>(bookingCustomerService.findBooking(), HttpStatus.OK);
+    }
+
+    @GetMapping("/cancelBooking")
+    public ResponseEntity<String> cancelBooking(@RequestBody String json) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        CancelBookingDTO dto = mapper.readValue(json, CancelBookingDTO.class);
+        return new ResponseEntity<>(bookingCustomerService.cancelBookingCustomer(dto), HttpStatus.OK);
     }
 }
