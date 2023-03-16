@@ -47,7 +47,7 @@ public class HeadManageController {
     }
 
     @PostMapping("/createBuildingManager")
-    public ResponseEntity<SecurityDTO> createBuildingManager(@RequestBody String json) throws Exception {
+    public ResponseEntity<String> createBuildingManager(@RequestBody String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         User dto = mapper.readValue(json, User.class);
         return new ResponseEntity<>(headManagerService.createBuildingManager(dto), HttpStatus.OK);

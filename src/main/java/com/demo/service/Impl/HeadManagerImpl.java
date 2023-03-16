@@ -72,7 +72,12 @@ public class HeadManagerImpl implements HeadManagerService {
     }
 
     @Override
-    public SecurityDTO createBuildingManager(User user) {
+    public String createBuildingManager(User user) {
+        Manager buildingManager = managerRepository.findManagerByManagerRole(user.getId(), 2);
+        if(buildingManager != null)
+        {
+            return "Building Manager is existed in Database!!!!!";
+        }
         User dto = new User();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
@@ -84,8 +89,7 @@ public class HeadManagerImpl implements HeadManagerService {
         userRepository.save(dto);
         managerRepository.save(new Manager(user.getId(), userRepository.findById(user.getId()).get(), 2));
         Manager manager = managerRepository.findById(user.getId()).get();
-        return new SecurityDTO(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
-                user.getEmail(), user.getPhone(), manager.isStatus_Account(), manager.getRole());
+        return "Create Building Manager Successfully";
     }
 
     @Override

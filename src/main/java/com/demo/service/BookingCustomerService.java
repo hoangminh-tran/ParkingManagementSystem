@@ -19,4 +19,7 @@ public interface BookingCustomerService {
 
     String cancelBookingCustomer(CancelBookingDTO dto);
 
+    String messageCancelBookingCustomer();
+
+    String messageBooking();
 }

@@ -87,7 +87,12 @@ public class BuildingManagerServiceImpl implements BuildingManagerService{
     }
 
     @Override
-    public SecurityDTO createSecurity(User user) {
+    public String createSecurity(User user) {
+        Manager security = managerRepository.findManagerByManagerRole(user.getId(), 3);
+        if(security != null)
+        {
+            return "Security Account is exited in DB";
+        }
         User dto = new User();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
@@ -98,9 +103,7 @@ public class BuildingManagerServiceImpl implements BuildingManagerService{
         dto.setPhone(user.getPhone());
         userRepository.save(dto);
         managerRepository.save(new Manager(user.getId(), userRepository.findById(user.getId()).get(), 3));
-        Manager manager = managerRepository.findById(user.getId()).get();
-        return new SecurityDTO(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
-                user.getEmail(), user.getPhone(), manager.isStatus_Account(), manager.getRole());
+        return "Create Security Account Successfully";
     }
 
     @Override

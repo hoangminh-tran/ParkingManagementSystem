@@ -55,31 +55,28 @@ public class UserServiceImpl implements UserService {
         dto.setFullname(user.getFullname());
         dto.setPhone(user.getPhone());
         User user1 = userRepository.save(dto);
-        //customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(user.getId()).get()));
+        customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(user.getId()).get()));
         return mapperedToUserResponse(user1);
     }
 
     @Override
-    public String createUser(UserDTO user) throws Exception {
-        if(userRepository.findById(user.getId()).isPresent())
+    public String createUser(UserDTO user){
+        User dto1 = userRepository.findById(user.getId()).orElse(null);
+        if(dto1 != null)
         {
-            message = "Your Username has been registered already!!!!";
+            return "Customer Username is existed in BD";
         }
-        else
-        {
-            User dto = new User();
-            dto.setId(user.getId());
-            dto.setEmail(user.getEmail());
-            dto.setGender(user.isGender());
-            dto.setDateofbirth(user.getDateofbirth());
-            dto.setPassword(user.getPassword());
-            dto.setFullname(user.getFullname());
-            dto.setPhone(user.getPhone());
-            User user1 = userRepository.save(dto);
-            customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(user.getId()).get()));
-            message = "Register successfully";
-        }
-        return "Register Loading....";
+        User dto = new User();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setGender(user.isGender());
+        dto.setDateofbirth(user.getDateofbirth());
+        dto.setPassword(user.getPassword());
+        dto.setFullname(user.getFullname());
+        dto.setPhone(user.getPhone());
+        User user1 = userRepository.save(dto);
+        customerRepository.save(new Customer(dto.getId(), false, userRepository.findById(user.getId()).get()));
+        return "Create Customer Successfully";
     }
 
     @Override

@@ -21,7 +21,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> createUser(@RequestBody String json) throws JsonProcessingException, Exception {
+    public ResponseEntity<String> createUser(@RequestBody String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO dto = mapper.readValue(json, UserDTO.class);
         return new ResponseEntity<>(userService.createUser(dto), HttpStatus.OK);

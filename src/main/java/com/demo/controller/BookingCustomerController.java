@@ -33,11 +33,23 @@ public class BookingCustomerController {
         return new ResponseEntity<>(bookingCustomerService.findBooking(), HttpStatus.OK);
     }
 
-    @GetMapping("/cancelBooking")
+    @PostMapping("/cancelBooking")
     public ResponseEntity<String> cancelBooking(@RequestBody String json) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
         CancelBookingDTO dto = mapper.readValue(json, CancelBookingDTO.class);
         return new ResponseEntity<>(bookingCustomerService.cancelBookingCustomer(dto), HttpStatus.OK);
+    }
+
+    @GetMapping("/messageCancelBookingCustomer")
+    public ResponseEntity<String> messageCancelBookingCustomer()
+    {
+        return new ResponseEntity<>(bookingCustomerService.messageCancelBookingCustomer(), HttpStatus.OK);
+    }
+
+    @GetMapping("/messageBooking")
+    public ResponseEntity<String> messageBooking()
+    {
+        return new ResponseEntity<>(bookingCustomerService.messageBooking(), HttpStatus.OK);
     }
 }

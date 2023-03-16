@@ -36,4 +36,8 @@ public interface Payment_C_Repository extends JpaRepository<Payment_C, String>{
                     "                    where id_area = ?1", nativeQuery = true
     )
     List<Payment_C> findPayment_C_By_Id_Area(Long id_Area);
+
+    @Query(value = "select pc.* from payment_c pc join customer_invoice ci " +
+            "on pc.id_payment = ci.id_payment where ci.id_c_invoice = ?1", nativeQuery = true)
+    Payment_C findPaymentByInvoiceId(String id_C_invoice);
 }

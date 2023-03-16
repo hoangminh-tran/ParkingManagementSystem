@@ -15,7 +15,7 @@ public interface HeadManagerService {
 
     SecurityDTO updateBuildingManager(String idUser, UpdateDTO dto);
 
-    SecurityDTO createBuildingManager(User user);
+    String createBuildingManager(User user);
 
     BuildingManagerDTO RevenueFromAllBuilding();
 

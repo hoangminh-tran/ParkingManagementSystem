@@ -30,10 +30,17 @@ public class PaymentResidentServiceImpl implements PaymentResidentService {
     BuildingRepository buildingRepository;
     public PaymentResidentResponseDTO paymentResidentResponseDTO;
 
+    public String message;
+
     @Override
     public PaymentResidentResponseDTO save(PaymentResidentDTO dto) {
         Resident resident = residentRepository.findById(dto.getIdUser()).get();
+        if(resident.isStatus_Account() == true)
+        {
+            message = "Your Resident Account has been Banned or Not Longer Existed";
+            return null;
 
+        }
         List<Payment_R> list = payment_r_repository.findAll();
         Payment_R  payment_r = new Payment_R("PR" + (list.size() + 1), dto.getTypeOfPayment(), resident);
         payment_r_repository.save(payment_r);
@@ -41,7 +48,13 @@ public class PaymentResidentServiceImpl implements PaymentResidentService {
         double Total_Of_Money = 0;
 
         Resident_Slot residentSlot = resident_slot_repository.findResidentSlotByIdResident(dto.getIdUser());
-
+        if(residentSlot.isStatus_Slots() == true)
+        {
+            message = "The slot is not empty you can not book that slot";
+            return null;
+        }
+        residentSlot.setStatus_Slots(true);
+        resident_slot_repository.save(residentSlot);
         String type_of_vehicle = residentSlot.getType_Of_Vehicle();
         switch(type_of_vehicle)
         {
@@ -70,11 +83,17 @@ public class PaymentResidentServiceImpl implements PaymentResidentService {
         paymentResidentResponseDTO = new PaymentResidentResponseDTO(dto.getIdUser(), "RI" + (list1.size() + 1), "PR" + (list.size() + 1),
                 status_Invoice ,
                 dto.getDateOfPayment(), Total_Of_Money, dto.getTypeOfPayment());
+        message  = "Payment Resident Successfully";
         return paymentResidentResponseDTO;
     }
 
     @Override
     public PaymentResidentResponseDTO findPayment() {
         return paymentResidentResponseDTO;
+    }
+
+    @Override
+    public String getMessageResidentPayment() {
+        return message;
     }
 }

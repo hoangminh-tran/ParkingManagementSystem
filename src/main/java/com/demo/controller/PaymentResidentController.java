@@ -31,4 +31,10 @@ public class PaymentResidentController {
     {
         return new ResponseEntity<>(paymentResidentService.findPayment(), HttpStatus.OK);
     }
+
+    @GetMapping("/getMessageResidentPayment")
+    public ResponseEntity<String> getMessageResidentPayment()
+    {
+        return new ResponseEntity<>(paymentResidentService.getMessageResidentPayment(), HttpStatus.OK);
+    }
 }

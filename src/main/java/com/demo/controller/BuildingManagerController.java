@@ -39,7 +39,7 @@ public class BuildingManagerController {
     }
 
     @PostMapping("/createSecurity")
-    public ResponseEntity<SecurityDTO> createSecurity(@RequestBody String json) throws Exception {
+    public ResponseEntity<String> createSecurity(@RequestBody String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         User dto = mapper.readValue(json, User.class);
         return new ResponseEntity<>(buildingManagerService.createSecurity(dto), HttpStatus.OK);

@@ -45,6 +45,8 @@ public class Booking {
 
     private boolean is_enabled;
 
+    private boolean is_checkout;
+
     public Booking(Long id_Booking, Date startDate, Date endDate, String startTime, String endTime, Customer_Slot customer_slot, Customer customer) {
         this.Id_Booking = id_Booking;
         this.startDate = startDate;
@@ -55,7 +57,7 @@ public class Booking {
         this.customer = customer;
         is_deleted = false;
         is_enabled = true;
-
+        is_checkout = false;
     }
 
     @OneToOne(mappedBy = "booking")

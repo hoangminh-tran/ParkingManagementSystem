@@ -1,4 +1,4 @@
-package com.demo.utils.request;
+package com.demo.utils.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAPI {
+public class LoginAPI {
     private String id;
 
     private String fullname;
@@ -26,4 +26,9 @@ public class UserAPI {
 
     private boolean status_Account;
 
+    private String message;
+
+    public LoginAPI(String message) {
+        this.message = message;
+    }
 }

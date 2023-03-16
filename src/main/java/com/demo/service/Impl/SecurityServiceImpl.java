@@ -3,6 +3,8 @@ package com.demo.service.Impl;
 import com.demo.entity.*;
 import com.demo.repository.*;
 import com.demo.service.SecurityService;
+import com.demo.utils.request.CustomerBookingHistory;
+import com.demo.utils.request.ResidentBookingHistory;
 import com.demo.utils.request.UpdateDTO;
 import com.demo.utils.request.UserAPI;
 import com.demo.utils.response.InvoiceCustomerResponse;
@@ -17,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.demo.entity.Money.*;
+
 @Service
 public class SecurityServiceImpl implements SecurityService {
     @Autowired
@@ -28,6 +32,9 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Autowired
     Resident_Slot_Repository resident_slot_repository;
+
+    @Autowired
+    BuildingRepository buildingRepository;
 
     @Autowired
     Invoice_C_Repository invoice_c_repository;
@@ -46,6 +53,9 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Autowired
     CustomerRepository customerRepository;
+
+    @Autowired
+    PaymentCustomerServiceImpl paymentCustomerService;
     @Override
     public List<UserAPI> getAllCustomerFromBuilding(String Id_Building) {
         List<UserAPI> list = new ArrayList<>();
@@ -205,17 +215,21 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public User createNewResident(User dto) {
+    public String createNewResident(User dto) {
+        Resident resident = residentRepository.findById(dto.getId()).orElse(null);
+        if(resident != null) return "Resident Account is existed in DB";
         userRepository.save(dto);
-        residentRepository.save(new Resident(dto.getId(),  userRepository.findById(dto.getId()).get(), true));
-        return dto;
+        residentRepository.save(new Resident(dto.getId(),  userRepository.findById(dto.getId()).get(), false));
+        return "Create Resident Account Successfully";
     }
 
     @Override
-    public User createNewCustomer(User dto) {
+    public String createNewCustomer(User dto) {
+        Customer customer = customerRepository.findById(dto.getId()).orElse(null);
+        if(customer != null) return "Customer Account is existed in DB";
         userRepository.save(dto);
-        customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(dto.getId()).get()));
-        return dto;
+        customerRepository.save(new Customer(dto.getId(), false, userRepository.findById(dto.getId()).get()));
+        return "Create Customer Account Successfully";
     }
 
     @Override
@@ -262,5 +276,185 @@ public class SecurityServiceImpl implements SecurityService {
         return new ResponseResidentInfoSlot(resident_slot.getResident().getIdUser(), resident_invoice.getTime(), payment_r.getId_Payment(),
                 resident_invoice.getId_R_Invoice(), payment_r.getType(), resident_slot.getType_Of_Vehicle());
 
+    }
+
+    @Override
+    public List<UserAPI> searchCustomerByEmail(String email) {
+        List<User> listUser = userRepository.searchCustomerByEmail(email);
+        List<UserAPI> list = new ArrayList<>();
+        for(User user : listUser)
+        {
+            Customer customer = customerRepository.findById(user.getId()).get();
+            if(customer != null){
+                list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(),
+                        user.getDateofbirth(), user.getEmail(), user.getPhone(), customer.isStatus_Account()));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<UserAPI> searchResidentByEmail(String email) {
+        List<User> listUser = userRepository.searchResidentByEmail(email);
+        List<UserAPI> list = new ArrayList<>();
+        for(User user : listUser)
+        {
+            Resident resident = residentRepository.findById(user.getId()).get();
+            if(resident != null){
+                list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(),
+                        user.getDateofbirth(), user.getEmail(), user.getPhone(), resident.isStatus_Account()));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<UserAPI> searchCustomerByPhone(String phone) {
+        List<User> listUser = userRepository.searchCustomerByPhone(phone);
+        List<UserAPI> list = new ArrayList<>();
+        for(User user : listUser)
+        {
+            Customer customer = customerRepository.findById(user.getId()).get();
+            if(customer != null){
+                list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(),
+                        user.getDateofbirth(), user.getEmail(), user.getPhone(), customer.isStatus_Account()));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<UserAPI> searchResidentByPhone(String phone) {
+        List<User> listUser = userRepository.searchResidentByPhone(phone);
+        List<UserAPI> list = new ArrayList<>();
+        for(User user : listUser)
+        {
+            Resident resident = residentRepository.findById(user.getId()).get();
+            if(resident != null){
+                list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(),
+                        user.getDateofbirth(), user.getEmail(), user.getPhone(), resident.isStatus_Account()));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public UserAPI BanOrUnBanCustomer(String id_Customer) {
+        User user = userRepository.findById(id_Customer).get();
+        Customer customer = customerRepository.findById(id_Customer).get();
+        customer.setStatus_Account((customer.isStatus_Account() == false) ? true : false);
+        customerRepository.save(customer);
+        return new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(),
+                user.getDateofbirth(), user.getEmail(), user.getPhone(), customer.isStatus_Account());
+    }
+
+    @Override
+    public UserAPI BanOrUnBanResident(String id_Resident) {
+        User user = userRepository.findById(id_Resident).get();
+        Resident resident = residentRepository.findById(id_Resident).get();
+        resident.setStatus_Account((resident.isStatus_Account() == false) ? true : false);
+        residentRepository.save(resident);
+        return new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(),
+                user.getDateofbirth(), user.getEmail(), user.getPhone(), resident.isStatus_Account());
+    }
+
+    @Override
+    public String changeStatusInvoiceCustomer(String id_c_invoice) {
+        Customer_Invoice customer_invoice = invoice_c_repository.findById(id_c_invoice).get();
+        customer_invoice.setStatus((customer_invoice.isStatus() == false) ? true : false);
+        invoice_c_repository.save(customer_invoice);
+
+        Payment_C payment_c = payment_c_repository.findPaymentByInvoiceId(customer_invoice.getId_C_Invoice());
+        Booking booking = bookingRepository.findBookingByIdPayment(payment_c.getId_Payment());
+        Customer_Slot customerSlot = customer_slot_repository.findCustomerSlotByIdBooking(booking.getId_Booking());
+
+        Building building = buildingRepository.findBuildingByCustomerSlot(customerSlot.getIndex());
+        building.setIncome(building.getIncome() + paymentCustomerService.calculateTotalOfMoney(customerSlot, booking));
+        buildingRepository.save(building);
+        return "The money is: " + building.getIncome();
+    }
+
+    @Override
+    public String changeStatusInvoiceResident(String id_r_invoice) {
+        Resident_Invoice resident_invoice = invoice_r_repository.findById(id_r_invoice).get();
+        resident_invoice.setStatus((resident_invoice.isStatus() == false) ? true : false);
+
+        Payment_R payment_r = payment_r_repository.findPaymentByInvoiceId(resident_invoice.getId_R_Invoice());
+        Resident_Slot residentSlot = resident_slot_repository.findResidentSlotByIdResident(payment_r.getResident().getIdUser());
+        double Total_Of_Money = 0;
+        switch(residentSlot.getType_Of_Vehicle())
+        {
+            case "Car":
+                Total_Of_Money += CAR_MONEY_BY_MONTH;
+                break;
+            case "Bike":
+                Total_Of_Money += BIKE_MONEY_BY_MONTH;
+                break;
+            case "Motor":
+                Total_Of_Money += MOTO_MONEY_BY_MONTH;
+                break;
+        }
+        resident_invoice.setTotal_Of_Money(Total_Of_Money);
+        invoice_r_repository.save(resident_invoice);
+
+        Building building = buildingRepository.findBuildingByResidentSlot(residentSlot.getIndex());
+        building.setIncome(building.getIncome() + Total_Of_Money);
+        buildingRepository.save(building);
+        return "The money is: " + building.getIncome();
+    }
+
+    @Override
+    public List<CustomerBookingHistory> getCustomerBookingHistory(String id_Customer) {
+        List<CustomerBookingHistory> list = new ArrayList<>();
+        List<Booking> bookingList = bookingRepository.findBookingByCustomer(id_Customer);
+        for (Booking booking : bookingList)
+        {
+            Customer_Slot customerSlot = customer_slot_repository.findCustomerSlotByIdBooking(booking.getId_Booking());
+            if(customerSlot != null)
+            {
+                Building building = buildingRepository.findBuildingByCustomerSlot(customerSlot.getIndex());
+                if (building != null)
+                {
+                    Payment_C payment_c = payment_c_repository.findPayment_C_By_Id_Booking(booking.getId_Booking());
+                    if (payment_c != null)
+                    {
+                        Customer_Invoice customer_invoice = invoice_c_repository.findCustomer_Invoice_By_Id_Payment(payment_c.getId_Payment());
+                        if(customer_invoice != null)
+                        {
+                            list.add(new CustomerBookingHistory(customer_invoice.getId_C_Invoice(), booking.getStartDate(), booking.getEndDate(),
+                                    booking.getStartTime(), booking.getEndTime(), customer_invoice.getTotal_Of_Money(), building.getId_Building(),
+                                    customerSlot.getId_C_Slot(), payment_c.getType(), customer_invoice.isStatus()));
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ResidentBookingHistory> getResidentBookingHistory(String id_Resident) {
+        List<ResidentBookingHistory> list = new ArrayList<>();
+        Resident_Slot residentSlot = resident_slot_repository.findResidentSlotByIdResident(id_Resident);
+        if(residentSlot != null)
+        {
+            Building building = buildingRepository.findBuildingByResidentSlot(residentSlot.getIndex());
+            if(building != null)
+            {
+                List<Payment_R> payment_r_List = payment_r_repository.findAllPaymentByResident(id_Resident);
+                for(Payment_R payment_r : payment_r_List) {
+                    if(payment_r != null)
+                    {
+                        Resident_Invoice resident_invoice = invoice_r_repository.findResident_InvoiceByResidentPayment(payment_r.getId_Payment());
+                        if(resident_invoice != null)
+                        {
+                            list.add(new ResidentBookingHistory(resident_invoice.getId_R_Invoice(), resident_invoice.getTime(), resident_invoice.getTotal_Of_Money(),
+                                    building.getId_Building(), residentSlot.getId_R_Slot(), payment_r.getType(), resident_invoice.isStatus()));
+                        }
+                    }
+                }
+            }
+        }
+        return list;
     }
 }

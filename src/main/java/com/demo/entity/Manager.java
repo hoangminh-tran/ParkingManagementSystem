@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Manager {
+public class Manager{
     @Id
     @Column(name = "Id_Manager", unique = false)
     private String IdUser;
@@ -31,7 +31,7 @@ public class Manager {
         IdUser = idUser;
         this.user = user;
         Role = role;
-        this.Status_Account = true;
+        this.Status_Account = false;
     }
 
     @OneToOne(mappedBy = "manager")

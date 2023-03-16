@@ -1,10 +1,8 @@
 package com.demo.service;
 
 import com.demo.entity.User;
-import com.demo.utils.request.SecurityDTO;
+import com.demo.utils.request.*;
 import com.demo.utils.response.ResponseCustomerInfoSlot;
-import com.demo.utils.request.UpdateDTO;
-import com.demo.utils.request.UserAPI;
 import com.demo.utils.response.InvoiceCustomerResponse;
 import com.demo.utils.response.InvoiceResidentResponse;
 import com.demo.utils.response.ResponseResidentInfoSlot;
@@ -31,9 +29,9 @@ public interface SecurityService {
 
     List<InvoiceResidentResponse> findAllResidentInvoice();
 
-    User createNewResident(User dto);
+    String createNewResident(User dto);
 
-    User createNewCustomer(User dto);
+    String createNewCustomer(User dto);
 
     User updateCustomer_Resident(String idUser, UpdateDTO dto);
 
@@ -41,6 +39,23 @@ public interface SecurityService {
 
     ResponseResidentInfoSlot getResidentInfoOfSlot(String id_Building, String id_R_slot);
 
+    List<UserAPI> searchCustomerByEmail(String email);
 
+    List<UserAPI> searchResidentByEmail(String Email);
 
+    List<UserAPI> searchCustomerByPhone(String phone);
+
+    List<UserAPI> searchResidentByPhone(String phone);
+
+    UserAPI BanOrUnBanCustomer(String id_Customer);
+
+    UserAPI BanOrUnBanResident(String id_Resident);
+
+    String changeStatusInvoiceCustomer(String id_c_invoice);
+
+    String changeStatusInvoiceResident(String id_r_invoice);
+
+    List<CustomerBookingHistory> getCustomerBookingHistory(String id_Customer);
+
+    List<ResidentBookingHistory> getResidentBookingHistory(String id_Resident);
 }

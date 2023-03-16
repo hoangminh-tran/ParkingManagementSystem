@@ -16,7 +16,7 @@ public interface BuildingManagerService {
 
     SecurityDTO updateSecurity(String idUser, UpdateDTO dto);
 
-    SecurityDTO createSecurity(User user);
+    String createSecurity(User user);
 
     List<RevenueDTO> RevenueFromEachBuilding();
 

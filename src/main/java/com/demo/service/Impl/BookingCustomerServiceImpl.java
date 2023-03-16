@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.demo.service.Impl.PaymentCustomerServiceImpl.calculateTotalOfMoney;
+
 @Service
 public class BookingCustomerServiceImpl implements BookingCustomerService {
     @Autowired
@@ -36,33 +38,83 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
     @Autowired
     AreaRepository areaRepository;
 
+    @Autowired
+    Payment_C_Repository payment_c_repository;
+
+    @Autowired
+    Invoice_C_Repository invoice_c_repository;
+
+
     public BookingCustomerResponseDTO bookingCustomerResponseDTO;
+
+    public String message;
 
     @Override
     public BookingCustomerResponseDTO save(BookingCustomerDTO dto) {
 
+        Customer customer = customerRepository.findById(dto.getIdUser()).get();
+        if(customer.isStatus_Account() == true)
+        {
+            message = "Your Account has been banned you can not book";
+            return null;
+        }
+        List<Booking> bookingList = bookingRepository.findBookingByCustomer(dto.getIdUser());
+        if(bookingList.size() > 0)
+        for(Booking booking : bookingList)
+        {
+            Payment_C payment_c = payment_c_repository.findPayment_C_By_Id_Booking(booking.getId_Booking());
+            if(payment_c != null)
+            {
+                Customer_Invoice customer_invoice = invoice_c_repository.findCustomer_Invoice_By_Id_Payment(payment_c.getId_Payment());
+                if(bookingList.size() >= 1 && customer_invoice.isStatus() == false)
+                {
+                    message = "You have to payment before booking another slot";
+                    return null;
+                }
+            }
+        }
         Customer_Slot customerSlot = customer_slot_repository.findCustomerSlot(dto.getId_C_Slot(), dto.getId_Building());
+        if(customerSlot.isStatus_Slots() == true)
+        {
+            message = "The Slot is not empty. You cannot book that slot";
+            return null;
+        }
         customerSlot.setType_Of_Vehicle(dto.getType_Of_Vehicle());
         customerSlot.setStatus_Slots(true);
-        customer_slot_repository.save(customerSlot);
+
 
         List<Booking> list = bookingRepository.findAll();
 
         Booking booking1 = new Booking(Long.parseLong(list.size() + 1 + ""),
                 dto.getStartDate(), dto.getEndDate(), dto.getStartTime(), dto.getEndTime(),
                 customerSlot, customerRepository.findById(dto.getIdUser()).get());
-        bookingRepository.save(booking1);
 
+
+        double Total_of_Money = calculateTotalOfMoney(customerSlot, booking1);
+        if(Total_of_Money == 0)
+        {
+            message = "Invalid Date Type of DateStart DateEnd StartTime EndTime";
+            return null;
+        }
+        customer_slot_repository.save(customerSlot);
+        bookingRepository.save(booking1);
         bookingCustomerResponseDTO =  new BookingCustomerResponseDTO(booking1.getId_Booking(), dto.getFullname(), dto.getEmail(), dto.getPhone(),
                 dto.getId_Building(), dto.getType_Of_Vehicle(), dto.getId_C_Slot(), dto.getStartDate(),
-                dto.getEndDate(), dto.getStartTime(), dto.getEndTime(), 26);
+                dto.getEndDate(), dto.getStartTime(), dto.getEndTime(), Total_of_Money);
         return  bookingCustomerResponseDTO;
+    }
+
+    @Override
+    public String messageBooking() {
+        return message;
     }
 
     @Override
     public BookingCustomerResponseDTO findBooking() {
         return bookingCustomerResponseDTO;
     }
+
+
 
     @Override
     public List<BookingAPI> findAllBooking() {
@@ -95,7 +147,7 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
         Customer customer = customerRepository.findById(dto.getId_Customer()).get();
         customer.setCancel_of_payments(customer.getCancel_of_payments() + 1);
 
-        String message = "Delete Successfully";
+        message = "Delete Successfully";
 
         if(customer.getCancel_of_payments() == 4) // Send notification if cancel booking == 4
         {
@@ -104,7 +156,7 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
         else if(customer.getCancel_of_payments() + 1 >= 5) // Ban Account if cancel booking == 5
         {
             message = "Ban Customer";
-            customer.setStatus_Account(false);
+            customer.setStatus_Account(true);
         }
         customerRepository.save(customer);
 
@@ -113,6 +165,11 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
         booking.set_deleted(true);
         booking.set_enabled(false);
         bookingRepository.save(booking);
+        return message;
+    }
+
+    @Override
+    public String messageCancelBookingCustomer() {
         return message;
     }
 }

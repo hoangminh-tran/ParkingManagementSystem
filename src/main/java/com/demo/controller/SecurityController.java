@@ -5,9 +5,7 @@ import com.demo.repository.Customer_Slot_Repository;
 import com.demo.service.Customer_Slot_Service;
 import com.demo.service.SecurityService;
 import com.demo.service.UserService;
-import com.demo.utils.request.UpdateDTO;
-import com.demo.utils.request.UserAPI;
-import com.demo.utils.request.UserDTO;
+import com.demo.utils.request.*;
 import com.demo.utils.response.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,7 @@ public class SecurityController {
     Customer_Slot_Repository customer_slot_repository;
 
     @PostMapping("/createCustomer")
-    public ResponseEntity<User> createCustomer(@RequestBody String json) throws Exception {
+    public ResponseEntity<String> createCustomer(@RequestBody String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         User dto = mapper.readValue(json, User.class);
         return new ResponseEntity<>(securityService.createNewCustomer(dto), HttpStatus.OK);
@@ -99,7 +97,7 @@ public class SecurityController {
     }
 
     @PostMapping("/createResident")
-    public ResponseEntity<User> createResident(@RequestBody String json) throws Exception {
+    public ResponseEntity<String> createResident(@RequestBody String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         User dto = mapper.readValue(json, User.class);
         return new ResponseEntity<>(securityService.createNewResident(dto), HttpStatus.OK);
@@ -126,4 +124,64 @@ public class SecurityController {
         return new ResponseEntity<>(securityService.getResidentInfoOfSlot(id_Building, id_R_Slot), HttpStatus.OK);
     }
 
+    @GetMapping("/searchCustomerByEmail/{email}")
+    public ResponseEntity<List<UserAPI>> searchCustomerByEmail(@PathVariable("email") String email)
+    {
+        return new ResponseEntity<>(securityService.searchCustomerByEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchResidentByEmail/{email}")
+    public ResponseEntity<List<UserAPI>> searchResidentByEmail(@PathVariable("email") String email)
+    {
+        return new ResponseEntity<>(securityService.searchResidentByEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchCustomerByPhone/{phone}")
+    public ResponseEntity<List<UserAPI>> searchCustomerByPhone(@PathVariable("phone") String phone)
+    {
+        return new ResponseEntity<>(securityService.searchCustomerByPhone(phone), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchResidentByPhone/{phone}")
+    public ResponseEntity<List<UserAPI>> searchResidentByPhone(@PathVariable("phone") String phone)
+    {
+        return new ResponseEntity<>(securityService.searchResidentByPhone(phone), HttpStatus.OK);
+    }
+
+    @PutMapping("/BanOrUnBanCustomer/{id_Customer}")
+    public ResponseEntity<UserAPI> BanOrUnBanCustomer(@PathVariable("id_Customer") String id_Customer)
+    {
+        return new ResponseEntity<>(securityService.BanOrUnBanCustomer(id_Customer), HttpStatus.OK);
+    }
+
+    @PutMapping("/BanOrUnBanResident/{id_Resident}")
+    public ResponseEntity<UserAPI> BanOrUnBanResident(@PathVariable("id_Resident") String id_Resident)
+    {
+        return new ResponseEntity<>(securityService.BanOrUnBanResident(id_Resident), HttpStatus.OK);
+    }
+
+    @PutMapping("/changeStatusInvoiceCustomer/{id_C_invoice}")
+    public ResponseEntity<String> changeStatusInvoiceCustomer(@PathVariable("id_C_invoice") String id_C_invoice)
+    {
+        return new ResponseEntity<>(securityService.changeStatusInvoiceCustomer(id_C_invoice), HttpStatus.OK);
+    }
+
+    @PutMapping("/changeStatusInvoiceResident/{id_R_invoice}")
+    public ResponseEntity<String> changeStatusInvoiceResident(@PathVariable("id_R_invoice") String id_R_invoice)
+    {
+        return new ResponseEntity<>(securityService.changeStatusInvoiceResident(id_R_invoice), HttpStatus.OK);
+    }
+
+    @GetMapping("/getCustomerBookingHistory/{id_Customer}")
+    public ResponseEntity<List<CustomerBookingHistory>> getCustomerBookingHistory(@PathVariable("id_Customer") String id_Customer)
+    {
+        return new ResponseEntity<>(securityService.getCustomerBookingHistory(id_Customer), HttpStatus.OK);
+    }
+
+    @GetMapping("/getResidentBookingHistory/{id_Resident}")
+    public ResponseEntity<List<ResidentBookingHistory>> getResidentBookingHistory(@PathVariable("id_Resident") String id_Resident)
+    {
+        return new ResponseEntity<>(securityService.getResidentBookingHistory(id_Resident), HttpStatus.OK);
+    }
 }
+

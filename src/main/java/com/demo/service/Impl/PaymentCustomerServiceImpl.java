@@ -103,23 +103,43 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
         return paymentReponseDTO;
     }
 
-    private double calculateTotalOfMoney(Customer_Slot customerSlot, Booking bookingInfo)
+    public static double calculateTotalOfMoney(Customer_Slot customerSlot, Booking bookingInfo)
     {
         //2022-06-20
         int DD_st = Integer.parseInt((bookingInfo.getStartDate() + "").substring(8, 10));
         int DD_en = Integer.parseInt((bookingInfo.getEndDate() + "").substring(8, 10));
 
-        int hh_st = Integer.parseInt(bookingInfo.getStartTime().substring(0, 2));
-        int hh_en = Integer.parseInt(bookingInfo.getEndTime().substring(0, 2));
+        int hh_st = 0, hh_en = 0, mm_st = 0, mm_en = 0;
+        if(bookingInfo.getStartTime().length() == 5)
+        {
+            hh_st = Integer.parseInt(bookingInfo.getStartTime().substring(0, 2));
+            mm_st = Integer.parseInt(bookingInfo.getStartTime().substring(3, 5));
+        }
+        else if (bookingInfo.getStartTime().length() == 4)
+        {
+            hh_st = Integer.parseInt(bookingInfo.getStartTime().substring(0, 1));
+            mm_st = Integer.parseInt(bookingInfo.getStartTime().substring(2, 4));
+        }
 
-        int mm_st = Integer.parseInt(bookingInfo.getStartTime().substring(3, 5));
-        int mm_en = Integer.parseInt(bookingInfo.getEndTime().substring(3, 5));
+        if(bookingInfo.getEndTime().length() == 5)
+        {
+            hh_en = Integer.parseInt(bookingInfo.getEndTime().substring(0, 2));
+            mm_en = Integer.parseInt(bookingInfo.getEndTime().substring(3, 5));
+        }
+        else if (bookingInfo.getEndTime().length() == 4)
+        {
+            hh_en = Integer.parseInt(bookingInfo.getEndTime().substring(0, 1));
+            mm_en = Integer.parseInt(bookingInfo.getEndTime().substring(2, 4));
+        }
+
+        if(hh_en == hh_st && mm_en == mm_st) return 0;
 
         int day = 0;
         int hour = 0;
         if(DD_st <= DD_en) // 2022-06-15     2022-06-17
         {
             day += DD_en - DD_st;
+            if(day == 0 && hh_st > hh_en) return 0;
             if (hh_st <= hh_en) {
                 if (hh_en - hh_st >= 8 && mm_en - mm_st >= 0) // check condition: 12h00  21h:00
                 {
@@ -129,17 +149,83 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 {
                     hour += hh_en - hh_st - 1;
                 }
-                else if (hh_en - hh_st > 0)// check condition: 12h30  17h:00
+                else if (hh_st - hh_en < 8 && mm_en - mm_st <= 0)// check condition: 12h30  17h:00
                 {
                     hour += hh_en - hh_st;
                 }
-                else if (hh_en - hh_st == 0 && mm_en > mm_st) // check condition 12:00  12:30
+                else if (hh_en - hh_st < 8 && mm_en > mm_st) // check condition 12:00  12:30
                 {
                     hour += 1;
                 }
             }
+            else if(day >= 1 && hh_st > hh_en) // Check startTime > endTime
+            {
+                day -= 1;
+                if(hh_st >= 13 && hh_st <= 24)
+                {
+                    if(hh_en >= 13 && hh_en <= 24)
+                    {
+                        if(hh_st - hh_en >= 8 && mm_en - mm_st >= 0)  // check condition: 21h00  13h:00
+                        {
+                            day += 1;
+                        }
+                        else if(hh_st - hh_en == 8 && mm_en - mm_st < 0) // check condition: 20h30  12h:00
+                        {
+                            hour += hh_st - hh_en - 1;
+                        }
+                        else if(hh_st - hh_en < 8 && mm_en - mm_st >= 0) // check condition: 19h00  12h:00
+                        {
+                            hour += hh_st - hh_en;
+                        }
+                        else if(hh_st - hh_en < 8 && mm_en - mm_st < 0) // check condition: 19h00  12h:00
+                        {
+                            hour += hh_st - hh_en - 1;
+                        }
+                    }
+                    else
+                    {
+                        if(hh_en >= 1 && hh_en <= 12)
+                        {
+                            if(hh_en + 24 - hh_st >= 8 && mm_en - mm_st >= 0)  // check condition 12h00   1h00
+                            {
+                                day += 1;
+                            }
+                            else if(hh_en + 24 - hh_st < 8 && mm_en - mm_st < 0) // check condition: 17h30 1h00
+                            {
+                                hour += hh_en + 24 - hh_st - 1;
+                            }
+                            else if(hh_en + 24 - hh_st < 8 && mm_en - mm_st >= 0) // check condition: 19h00  1h:00
+                            {
+                                hour += hh_en + 24 - hh_st;
+                            }
+                        }
+                    }
+                }
+                else if(hh_st >= 1 && hh_st <= 12)
+                {
+                    if(hh_en >= 1 && hh_en <= 12)
+                    {
+                        if(hh_st - hh_en >= 8 && mm_en - mm_st >= 0)  // check condition: 21h00  13h:00
+                        {
+                            day += 1;
+                        }
+                        else if(hh_st - hh_en == 8 && mm_en - mm_st < 0) // check condition: 20h30  12h:00
+                        {
+                            hour += hh_st - hh_en - 1;
+                        }
+                        else if(hh_st - hh_en < 8 && mm_en - mm_st >= 0) // check condition: 19h00  12h:00
+                        {
+                            hour += hh_st - hh_en;
+                        }
+                        else if(hh_st - hh_en < 8 && mm_en - mm_st < 0) // check condition: 19h00  12h:00
+                        {
+                            hour += hh_st - hh_en - 1;
+                        }
+                    }
+                }
+            }
         }
-
+//        System.out.println(day + " " + hour);
         double Total_Of_Money = 0;
         String type_of_vehicle = customerSlot.getType_Of_Vehicle();
         switch(type_of_vehicle)

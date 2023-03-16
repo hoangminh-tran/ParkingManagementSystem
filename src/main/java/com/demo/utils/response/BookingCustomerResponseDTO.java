@@ -32,7 +32,6 @@ public class BookingCustomerResponseDTO {
 
     private String endTime;
 
-    private Integer total_Of_Money;
-
+    private double total_Of_Money;
 
 }
