@@ -40,7 +40,7 @@ public class SecurityController {
     }
 
     @GetMapping("/ListAllResidentFromBuilding/{Id_Building}")
-    public ResponseEntity<List<User>>getAllResidentFromBuilding(@PathVariable("Id_Building") String Id_Building)
+    public ResponseEntity<List<ResidentAPI>>getAllResidentFromBuilding(@PathVariable("Id_Building") String Id_Building)
     {
         return new ResponseEntity<>(securityService.getAllResidentFromBuilding(Id_Building) , HttpStatus.OK);
     }

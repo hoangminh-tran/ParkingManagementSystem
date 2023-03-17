@@ -13,6 +13,8 @@ public interface UserService {
 
     String createUser(UserDTO dto);
 
+    String changePassword(String id, String password);
+
     String getMessage();
 
     Optional<UserResponseDTO> findById(String id);

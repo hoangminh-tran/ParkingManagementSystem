@@ -23,9 +23,9 @@ public class MoneyServiceImpl implements MoneyService {
 
     private void calculate()
     {
-        CAR_MONEY_BY_DAY = CAR_MONEY_BY_HOUR * 3.5;
-        BIKE_MONEY_BY_DAY = BIKE_MONEY_BY_HOUR * 3.5;
-        MOTO_MONEY_BY_DAY = MOTO_MONEY_BY_HOUR * 3.5;
+        CAR_MONEY_BY_DAY = CAR_MONEY_BY_HOUR * 15;
+        BIKE_MONEY_BY_DAY = BIKE_MONEY_BY_HOUR * 15;
+        MOTO_MONEY_BY_DAY = MOTO_MONEY_BY_HOUR * 15;
         CAR_MONEY_BY_MONTH = CAR_MONEY_BY_DAY * 28;
         BIKE_MONEY_BY_MONTH = BIKE_MONEY_BY_DAY * 28;
         MOTO_MONEY_BY_MONTH = MOTO_MONEY_BY_DAY * 28;

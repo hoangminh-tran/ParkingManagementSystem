@@ -31,4 +31,11 @@ public class ResidentSlotController {
     {
         return new ResponseEntity<>(resident_slot_service.find_Resident_Slot(), HttpStatus.OK);
     }
+
+    @GetMapping("/getMessageResidentBooking")
+    public ResponseEntity<String> getMessageResidentBooking()
+    {
+        return new ResponseEntity<>(resident_slot_service.getMessageResidentBooking(), HttpStatus.OK);
+    }
+
 }

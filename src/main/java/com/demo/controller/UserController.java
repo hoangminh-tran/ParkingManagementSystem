@@ -26,6 +26,11 @@ public class UserController {
         UserDTO dto = mapper.readValue(json, UserDTO.class);
         return new ResponseEntity<>(userService.createUser(dto), HttpStatus.OK);
     }
+    @PutMapping ("/changePassword")
+    public ResponseEntity<String> findById(@RequestParam("id") String id, @RequestParam("newPassword") String newPassword)
+    {
+        return new ResponseEntity<>(userService.changePassword(id, newPassword), HttpStatus.OK);
+    }
 
     @GetMapping("/getMessage")
     public ResponseEntity<String> getMessage()

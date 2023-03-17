@@ -23,5 +23,5 @@ public class Resident_Slot_DTO {
 
     private String Id_R_Slot;
 
-    private boolean status_Slots;
+//    private boolean status_Slots;
 }

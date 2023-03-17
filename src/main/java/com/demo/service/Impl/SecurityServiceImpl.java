@@ -3,10 +3,7 @@ package com.demo.service.Impl;
 import com.demo.entity.*;
 import com.demo.repository.*;
 import com.demo.service.SecurityService;
-import com.demo.utils.request.CustomerBookingHistory;
-import com.demo.utils.request.ResidentBookingHistory;
-import com.demo.utils.request.UpdateDTO;
-import com.demo.utils.request.UserAPI;
+import com.demo.utils.request.*;
 import com.demo.utils.response.InvoiceCustomerResponse;
 import com.demo.utils.response.InvoiceResidentResponse;
 import com.demo.utils.response.ResponseCustomerInfoSlot;
@@ -82,18 +79,35 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public List<User> getAllResidentFromBuilding(String Id_Building) {
-        List<User> list = new ArrayList<>();
+    public List<ResidentAPI> getAllResidentFromBuilding(String Id_Building) {
+        List<ResidentAPI> list = new ArrayList<>();
         List<Resident_Slot> residentSlotList = resident_slot_repository.findAllSlotOfEachBuilding(Id_Building);
+        Set<String> set = new HashSet<>();
         for(Resident_Slot resident_slot : residentSlotList)
         {
             if(resident_slot.isStatus_Slots() == true)
             {
                 User user = userRepository.findById(resident_slot.getResident().getIdUser()).get();
-                list.add(user);
-//                Customer customer = customerRepository.findById(user.getId()).get();
-//                list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
-//                        user.getEmail(), user.getPhone(), customer.isStatus_Account()));
+                if(user != null)
+                {
+                    List<Payment_R> listPayment = payment_r_repository.findAllPaymentByResident(user.getId());
+                    if(listPayment.size() > 0)
+                    {
+                        for(Payment_R payment_r : listPayment)
+                        {
+                            Resident_Invoice resident_invoice = invoice_r_repository.findResident_InvoiceByResidentPayment(payment_r.getId_Payment());
+                            if (resident_invoice != null && !set.contains(resident_slot.getResident().getIdUser()) && resident_invoice.isStatus())
+                            {
+//                                System.out.println(resident_invoice.getId_R_Invoice());
+                                list.add(new ResidentAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
+                                        user.getEmail(), user.getPhone(), "Completed Payment"));
+                                set.add(resident_slot.getResident().getIdUser());
+                            }
+                        }
+                    }
+                    else  list.add(new ResidentAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
+                            user.getEmail(), user.getPhone(), "Booked"));
+                }
             }
         }
         return list;

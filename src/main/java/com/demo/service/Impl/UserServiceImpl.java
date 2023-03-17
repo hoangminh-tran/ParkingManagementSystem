@@ -45,6 +45,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String changePassword(String id, String newPassword) {
+        User user = userRepository.findById(id).get();
+        if (user != null)
+        {
+            user.setPassword(newPassword);
+            userRepository.save(user);
+        }
+        return "Success";
+    }
+
+    @Override
     public UserResponseDTO save(UserDTO user){
         User dto = new User();
         dto.setId(user.getId());
