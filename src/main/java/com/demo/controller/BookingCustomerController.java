@@ -26,7 +26,6 @@ public class BookingCustomerController {
         BookingCustomerDTO dto = mapper.readValue(json, BookingCustomerDTO.class);
         return new ResponseEntity<>(bookingCustomerService.save(dto), HttpStatus.OK);
     }
-
     @GetMapping("/findBooking")
     public ResponseEntity<BookingCustomerResponseDTO> findBooking()
     {

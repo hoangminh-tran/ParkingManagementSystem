@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface UserService {
     UserResponseDTO save(UserDTO dto)  throws Exception;
+    UserResponseDTO saveEmptyUser(UserDTO dto)  throws Exception;
 
     String createUser(UserDTO dto);
 

@@ -71,6 +71,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDTO saveEmptyUser(UserDTO user){
+        User dto = new User();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setGender(user.isGender());
+        dto.setDateofbirth(user.getDateofbirth());
+        dto.setPassword(user.getPassword());
+        dto.setFullname(user.getFullname());
+        dto.setPhone(user.getPhone());
+        User user1 = userRepository.save(dto);
+//        customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(user.getId()).get()));
+        return mapperedToUserResponse(user1);
+    }
+
+    @Override
     public String createUser(UserDTO user){
         User dto1 = userRepository.findById(user.getId()).orElse(null);
         if(dto1 != null)

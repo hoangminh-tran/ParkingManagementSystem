@@ -79,16 +79,15 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
             message = "The Slot is not empty. You cannot book that slot";
             return null;
         }
+
         customerSlot.setType_Of_Vehicle(dto.getType_Of_Vehicle());
         customerSlot.setStatus_Slots(true);
-
 
         List<Booking> list = bookingRepository.findAll();
 
         Booking booking1 = new Booking(Long.parseLong(list.size() + 1 + ""),
                 dto.getStartDate(), dto.getEndDate(), dto.getStartTime(), dto.getEndTime(),
                 customerSlot, customerRepository.findById(dto.getIdUser()).get());
-
 
         double Total_of_Money = calculateTotalOfMoney(customerSlot, booking1);
         if(Total_of_Money == 0)

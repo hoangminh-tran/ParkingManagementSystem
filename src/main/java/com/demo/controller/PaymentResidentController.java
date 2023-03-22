@@ -8,6 +8,7 @@ import com.demo.utils.response.PaymentCustomerReponseDTO;
 import com.demo.utils.response.PaymentResidentResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,9 @@ public class PaymentResidentController {
     }
 
     @GetMapping("/findPayment")
-    public ResponseEntity<PaymentResidentResponseDTO> findPayment()
+    public ResponseEntity<PaymentResidentResponseDTO> findPayment(HttpSession session)
     {
+        session.setAttribute("InvoiceResident", paymentResidentService.findPayment());
         return new ResponseEntity<>(paymentResidentService.findPayment(), HttpStatus.OK);
     }
 

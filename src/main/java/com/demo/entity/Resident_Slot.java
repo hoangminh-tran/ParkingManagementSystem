@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Resident_Slot {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_Index")
     private Long index;
 
@@ -33,6 +34,21 @@ public class Resident_Slot {
         Type_Of_Vehicle = type_Of_Vehicle;
         Status_Slots = status_Slots;
         this.resident = resident;
+        this.area = area;
+    }
+
+    public Resident_Slot(Long index, String id_R_Slot, String type_Of_Vehicle, boolean status_Slots, Area area) {
+        this.index = index;
+        Id_R_Slot = id_R_Slot;
+        Type_Of_Vehicle = type_Of_Vehicle;
+        Status_Slots = status_Slots;
+        this.area = area;
+    }
+
+    public Resident_Slot(String id_R_Slot, String type_Of_Vehicle, boolean status_Slots, Area area) {
+        Id_R_Slot = id_R_Slot;
+        Type_Of_Vehicle = type_Of_Vehicle;
+        Status_Slots = status_Slots;
         this.area = area;
     }
 

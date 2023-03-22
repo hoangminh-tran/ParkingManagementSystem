@@ -2,7 +2,9 @@ package com.demo.repository;
 
 import com.demo.entity.Booking;
 import com.demo.entity.Customer_Slot;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -44,4 +46,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             (value = "select b.* from booking b  " +
                     "where b.id_customer = ?1", nativeQuery = true)
     List<Booking> findBookingByCustomerID(String id_Customer);
+
+//    @Transactional
+    @Modifying
+    @Query
+            (value = "update booking set is_checkout = ?1 where id_booking = ?2", nativeQuery = true)
+    int updateStatusCheckout(boolean status, Long id_booking);
 }

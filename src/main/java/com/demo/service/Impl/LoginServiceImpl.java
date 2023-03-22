@@ -30,6 +30,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginAPI checkLoginAccount(String username, String password) {
         LoginAPI loginAPI = new LoginAPI();
+//        System.out.println(username + " " + password);
         User user = userRepository.findUserByUsernameAndPassword(username, password);
         if(user != null)
         {

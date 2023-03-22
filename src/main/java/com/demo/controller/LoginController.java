@@ -19,6 +19,7 @@ public class LoginController {
     public ResponseEntity<LoginAPI> findBooking(@RequestParam("username") String username,
                                                 @RequestParam("password") String password)
     {
+//        System.out.println(username + " " + password);
         return new ResponseEntity<>(loginService.checkLoginAccount(username, password), HttpStatus.OK);
     }
 }

@@ -9,6 +9,7 @@ import com.demo.service.Resident_Slot_Service;
 import com.demo.utils.request.Customer_Slot_API;
 import com.demo.utils.request.Resident_Slot_API;
 import com.demo.utils.request.Resident_Slot_DTO;
+import com.demo.utils.response.ResidentSlotDTO;
 import com.demo.utils.response.Resident_Slot_Response_DTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,6 +52,16 @@ public class Resident_Slot_Service_Impl implements Resident_Slot_Service {
                 dto.getId_Building(), dto.getType_Of_Vehicle(), dto.getId_R_Slot());
 
         return resident_slot_response_dto;
+    }
+
+    @Override
+    public ResidentSlotDTO saveEmptySlot(ResidentSlotDTO dto) {
+        List<Resident_Slot> list = resident_slot_repository.findAll();
+        Long index = Long.parseLong(String.valueOf(list.size())) + 1;
+//        Resident_Slot rs = new Resident_Slot(index, dto.getId_R_Slot(), dto.getType_Of_Vehicle(), dto.isStatus_Slots(), areaRepository.findById(dto.getId_Area()).get());
+        Resident_Slot rs = new Resident_Slot(dto.getId_R_Slot(), dto.getType_Of_Vehicle(), dto.isStatus_Slots(), areaRepository.findById(dto.getId_Area()).get());
+        resident_slot_repository.save(rs);
+        return dto;
     }
 
     @Override
