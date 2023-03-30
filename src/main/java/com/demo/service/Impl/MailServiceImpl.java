@@ -9,6 +9,7 @@ import com.demo.repository.ResidentRepository;
 import com.demo.repository.UserRepository;
 import com.demo.service.MailService;
 import com.demo.service.ThymeleafService;
+import com.demo.utils.request.PaymentCustomerMail;
 import com.demo.utils.response.FeeResponse;
 import com.demo.utils.response.PaymentCustomerReponseDTO;
 import com.demo.utils.response.PaymentResidentResponseDTO;
@@ -44,23 +45,24 @@ public class MailServiceImpl implements MailService {
     private final ResidentRepository residentRepository;
 
 
-
-
     @Value("${spring.mail.username")
     public String email;
 
 
     @Override
-    public String invoiceCustomer(String id_User, PaymentCustomerReponseDTO invoiceToEmail) {
-        User user = userRepository.findById(id_User).get();
-        if(user != null)
+    public String invoiceCustomer(PaymentCustomerMail dto) {
+        User user = userRepository.findById(dto.getId_User()).get();
+        System.out.println(user);
+        Customer customer = customerRepository.findById(dto.getId_User()).get();
+        System.out.println(customer);
+        if(user != null && customer.isStatus_Account() == false)
         {
-            if(invoiceToEmail != null)
+            if(dto != null)
             {
-                System.out.println(invoiceToEmail.getId_C_Invoice() + " " + invoiceToEmail.getStartTime());
+                System.out.println(dto.getId_C_Invoice() + " " + dto.getStartTime());
                 String email_to = user.getEmail();
                 String email_subject = "Invoice Customer Booking";
-                sendMailInvoiceCustomer(email_to, email_subject, invoiceToEmail);
+                sendMailInvoiceCustomer(email_to, email_subject, dto);
             }
             else return "Fail";
         }
@@ -70,9 +72,10 @@ public class MailServiceImpl implements MailService {
 
 
     @Override
-    public String invoiceResident(String id_User, PaymentResidentResponseDTO invoiceToEmail) {
-        User user = userRepository.findById(id_User).get();
-        if(user != null)
+    public String invoiceResident(PaymentResidentResponseDTO invoiceToEmail) {
+        User user = userRepository.findById(invoiceToEmail.getIdUser()).get();
+        Resident resident = residentRepository.findById(invoiceToEmail.getIdUser()).get();
+        if(user != null && resident.isStatus_Account() == false)
         {
             if(invoiceToEmail != null)
             {
@@ -127,10 +130,10 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public String feeCustomerExpired(String id_User, FeeResponse dto) {
-        User user = userRepository.findById(id_User).get();
-        Customer customer = customerRepository.findById(id_User).get();
-        if(user != null && customer != null) {
+    public String feeCustomerExpired(FeeResponse dto) {
+        User user = userRepository.findById(dto.getId_user()).get();
+        Customer customer = customerRepository.findById(dto.getId_user()).get();
+        if(user != null && customer != null && customer.isStatus_Account() == false) {
             if(dto != null)
             {
                 String email_to = user.getEmail();
@@ -144,10 +147,10 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public String feeResidentExpired(String id_User, FeeResponse dto) {
-        User user = userRepository.findById(id_User).get();
-        Resident resident = residentRepository.findById(id_User).get();
-        if(user != null && resident != null){
+    public String feeResidentExpired(FeeResponse dto) {
+        User user = userRepository.findById(dto.getId_user()).get();
+        Resident resident = residentRepository.findById(dto.getId_user()).get();
+        if(user != null && resident != null && resident.isStatus_Account() == false){
             if(dto != null)
             {
                 String email_to = user.getEmail();
@@ -234,7 +237,7 @@ public class MailServiceImpl implements MailService {
     }
 
 
-    private void sendMailInvoiceCustomer(String email_to, String email_subject, PaymentCustomerReponseDTO dto) {
+    private void sendMailInvoiceCustomer(String email_to, String email_subject, PaymentCustomerMail dto) {
         try{
 
 
@@ -258,9 +261,6 @@ public class MailServiceImpl implements MailService {
         }
     }
 
-
-
-
     private void sendMailInvoiceResident(String email_to, String email_subject, PaymentResidentResponseDTO dto) {
         try{
 
@@ -283,10 +283,6 @@ public class MailServiceImpl implements MailService {
         {
             e.printStackTrace();
         }
-
-
     }
-
-
 }
 

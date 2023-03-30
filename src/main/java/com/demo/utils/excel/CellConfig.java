@@ -1,4 +1,4 @@
-package com.demo.utils.request;
+package com.demo.utils.excel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MailDTO {
-    private String id_User;
+public class CellConfig {
+    private int columnIndex;
 
-    private String time;
+    private String fieldName;
 }
-

@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public interface BookingCustomerService {
-    BookingCustomerResponseDTO save(BookingCustomerDTO dto);
+    BookingCustomerResponseDTO save(BookingCustomerDTO dto, String time);
 
     BookingCustomerResponseDTO findBooking();
 

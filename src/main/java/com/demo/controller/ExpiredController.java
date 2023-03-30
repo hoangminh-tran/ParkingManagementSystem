@@ -34,15 +34,13 @@ public class ExpiredController {
 
     @GetMapping("/getFeeCutomer/{id_invoice}")
     public ResponseEntity<FeeResponse> getCustomerFee(@PathVariable("id_invoice") String id_invoice,
-                                                      @RequestParam String time,
-                                                      HttpSession session
+                                                      @RequestParam String time
                                                       ){
 //        time = time.replace("a", "");
         time = time.replace("\n", "");
         time = time.replace("\t", "");
         time = time.trim();
-        System.out.println(time);
-        session.setAttribute("FeeCustomerExpired", customerExpiredService.getCustomerFee(id_invoice, time));
+        System.out.println(time);   
         return new ResponseEntity<>(customerExpiredService.getCustomerFee(id_invoice, time), HttpStatus.CREATED);
     }
 
@@ -67,13 +65,11 @@ public class ExpiredController {
 
     @GetMapping("/getFeeResident/{id_invoice}")
     public ResponseEntity<FeeResponse> getResidentFee(@PathVariable("id_invoice") String id_invoice,
-                                                      @RequestParam String time,
-                                                      HttpSession session){
+                                                      @RequestParam String time){
         time = time.replace("\n", "");
         time = time.replace("\t", "");
         time = time.trim();
         System.out.println(time);
-        session.setAttribute("FeeResidentExpired", residentExpiredService.getResidentFee(id_invoice, time));
         return new ResponseEntity<>(residentExpiredService.getResidentFee(id_invoice, time), HttpStatus.CREATED);
     }
 

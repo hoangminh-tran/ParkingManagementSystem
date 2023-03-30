@@ -2,13 +2,12 @@ package com.demo.controller;
 
 import com.demo.entity.User;
 import com.demo.service.HeadManagerService;
-import com.demo.utils.request.BuildingManagerDTO;
-import com.demo.utils.request.RevenueDTO;
-import com.demo.utils.request.SecurityDTO;
-import com.demo.utils.request.UpdateDTO;
+import com.demo.service.StatisticInvoiceService;
+import com.demo.utils.request.*;
 import com.demo.utils.response.BuildingManagerResponse;
 import com.demo.utils.response.UserResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/headManager")
+@RequiredArgsConstructor
 public class HeadManageController {
     @Autowired
     HeadManagerService headManagerService;
+
+    private final StatisticInvoiceService statisticInvoiceService;
 
     @GetMapping("/findAllBuildingManager")
     public ResponseEntity<List<SecurityDTO>> findAllSecurity(){
@@ -62,5 +64,11 @@ public class HeadManageController {
     public ResponseEntity<SecurityDTO> findByIdManager(@PathVariable("idUser") String idUser)
     {
         return new ResponseEntity<>(headManagerService.findByIdManager(idUser), HttpStatus.OK);
+    }
+
+    @GetMapping("/ImportStatisticInvoice")
+    public ResponseEntity<List<StatisticDTO>> ImportStatisticInvoice(@RequestParam("time") String time)
+    {
+        return new ResponseEntity<>(statisticInvoiceService.ImportStatisticInvoice(time), HttpStatus.OK);
     }
 }

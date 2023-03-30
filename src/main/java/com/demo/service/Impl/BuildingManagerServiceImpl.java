@@ -129,9 +129,9 @@ public class BuildingManagerServiceImpl implements BuildingManagerService{
                     id_Area = 6;
                     break;
             }
-            System.out.println(building.getId_Building() + " " + building.getIncome());
-             System.out.println(countCustomerPaymentFromEachBuilding(Long.parseLong(id_Area + "")));
-            System.out.println(countResidentPaymentFromEachBuilding(building.getId_Building(), Long.parseLong((id_Area - 3) + "")));
+          //  System.out.println(building.getId_Building() + " " + building.getIncome());
+          //   System.out.println(countCustomerPaymentFromEachBuilding(Long.parseLong(id_Area + "")));
+                System.out.println(countResidentPaymentFromEachBuilding(building.getId_Building(), Long.parseLong((id_Area - 3) + "")));
             revenueDTOList.add(new RevenueDTO(building.getId_Building(), building.getIncome(),building.getManager().getIdUser(),
                     countCustomerPaymentFromEachBuilding(Long.parseLong(id_Area + "")),
                     countResidentPaymentFromEachBuilding(building.getId_Building(), Long.parseLong((id_Area - 3) + ""))));
@@ -173,6 +173,7 @@ public class BuildingManagerServiceImpl implements BuildingManagerService{
         Set<String> set = new HashSet<>();
         for(Resident_Slot residentSlot : residentSlots)
         {
+            if(residentSlot.getResident() == null) continue;
             if(!set.contains(residentSlot.getResident().getIdUser()) && residentSlot.isStatus_Slots() == true)
             {
                 if(payment_r_repository.findListPayment_R_By_ResidentSlotAndResidentName(residentSlot.getId_R_Slot(), id_Area, residentSlot.getResident().getIdUser()) != null)

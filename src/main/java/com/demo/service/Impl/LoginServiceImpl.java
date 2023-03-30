@@ -1,12 +1,12 @@
 package com.demo.service.Impl;
 
-import com.demo.entity.Customer;
-import com.demo.entity.Resident;
-import com.demo.entity.User;
-import com.demo.repository.CustomerRepository;
-import com.demo.repository.ResidentRepository;
-import com.demo.repository.UserRepository;
+import com.demo.entity.*;
+import com.demo.repository.*;
+import com.demo.service.CustomerExpiredService;
 import com.demo.service.LoginService;
+import com.demo.utils.request.MailDTO;
+import com.demo.utils.response.ExpiredResponse;
+import com.demo.utils.response.FeeResponse;
 import com.demo.utils.response.LoginAPI;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 @Service
 public class LoginServiceImpl implements LoginService {
     @Autowired
@@ -25,7 +29,19 @@ public class LoginServiceImpl implements LoginService {
     CustomerRepository customerRepository;
 
     @Autowired
+    BookingRepository bookingRepository;
+
+    @Autowired
+    Payment_C_Repository payment_c_repository;
+
+    @Autowired
+    Invoice_C_Repository invoice_c_repository;
+
+    @Autowired
     ResidentRepository residentRepository;
+
+    @Autowired
+    CustomerExpiredService customerExpiredService;
 
     @Override
     public LoginAPI checkLoginAccount(String username, String password) {
@@ -70,5 +86,27 @@ public class LoginServiceImpl implements LoginService {
             loginAPI.setMessage("Invalid Password or Username");
         }
         return loginAPI;
+    }
+
+    @Override
+    public List<FeeResponse> checkLoginExpireInvoice(String id_User, String time) {
+        List<FeeResponse> feeResponseList = new ArrayList<>();
+        List<Booking> bookingList = bookingRepository.findBookingByCustomer(id_User);
+        if(bookingList.size() > 0) {
+            for (Booking booking : bookingList) {
+                Payment_C payment_c = payment_c_repository.findPayment_C_By_Id_Booking(booking.getId_Booking());
+                if (payment_c != null) {
+                    Customer_Invoice customer_invoice = invoice_c_repository.findCustomer_Invoice_By_Id_Payment(payment_c.getId_Payment());
+                    if (customer_invoice != null && customerExpiredService.checkExpired(id_User,
+                            customerExpiredService.findAllCustomerInvoiceByCustomerID(id_User),
+                            time) != null)
+                    {
+                        System.out.println("Hm: " + customerExpiredService.getCustomerFee(customer_invoice.getId_C_Invoice(), time));
+                        feeResponseList.add(customerExpiredService.getCustomerFee(customer_invoice.getId_C_Invoice(), time));
+                    }
+                }
+            }
+        }
+        return feeResponseList;
     }
 }

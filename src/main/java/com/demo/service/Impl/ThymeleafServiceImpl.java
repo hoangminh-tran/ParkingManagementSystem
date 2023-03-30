@@ -2,6 +2,7 @@ package com.demo.service.Impl;
 
 
 import com.demo.service.ThymeleafService;
+import com.demo.utils.request.PaymentCustomerMail;
 import com.demo.utils.response.FeeResponse;
 import com.demo.utils.response.PaymentCustomerReponseDTO;
 import com.demo.utils.response.PaymentResidentResponseDTO;
@@ -92,7 +93,7 @@ public class ThymeleafServiceImpl implements ThymeleafService {
 
 
     @Override
-    public String createContentInvoiceCustomer(PaymentCustomerReponseDTO invoiceToEmail) {
+    public String createContentInvoiceCustomer(PaymentCustomerMail invoiceToEmail) {
         final Context context = new Context();
 
 

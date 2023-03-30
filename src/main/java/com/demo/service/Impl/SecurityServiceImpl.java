@@ -150,7 +150,7 @@ public class SecurityServiceImpl implements SecurityService {
         for (Customer_Invoice customer_invoice: customer_invoices)
         {
             Payment_C payment_c = payment_c_repository.findById(customer_invoice.getPayment_c().getId_Payment()).get();
-            Booking booking = bookingRepository.findBookingByIdPayment(payment_c.getId_Payment());
+            Booking booking = bookingRepository.findAllBookingByIdPayment(payment_c.getId_Payment());
             list.add(new InvoiceCustomerResponse(customer_invoice.getId_C_Invoice(), payment_c.getId_Payment(), booking.getId_Booking(),
                     customer_invoice.getTotal_Of_Money(), customer_invoice.isStatus(),
                     payment_c.getType(), booking.getCustomer().getIdUser(), booking.getStartDate(), booking.getEndDate()));

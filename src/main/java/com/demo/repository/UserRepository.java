@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
@@ -86,4 +87,9 @@ public interface UserRepository extends JpaRepository<User, String> {
             value = "select * from users where id_user = ?1 and password = ?2", nativeQuery = true
     )
     User findUserByUsernameAndPassword(String id_user, String password);
+
+    public List<User> findAllByPhone(String phone);
+    public List<User> findAllByEmail(String email);
+
+    Optional<User> findById(String id);
 }

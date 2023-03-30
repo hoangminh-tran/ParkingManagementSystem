@@ -33,9 +33,8 @@ public class PaymentCustomerController {
     }
 
     @GetMapping("/findPayment")
-    public ResponseEntity<PaymentCustomerReponseDTO> findPayment(HttpSession session)
+    public ResponseEntity<PaymentCustomerReponseDTO> findPayment()
     {
-        session.setAttribute("InvoiceCustomer", paymentCustomerService.findPayment());
         return new ResponseEntity<>(paymentCustomerService.findPayment(), HttpStatus.OK);
     }
 }

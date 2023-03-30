@@ -21,10 +21,10 @@ public class BookingCustomerController {
    BookingCustomerService bookingCustomerService;
 
     @PostMapping("/save")
-    public ResponseEntity<BookingCustomerResponseDTO> save(@RequestBody String json) throws JsonProcessingException{
+    public ResponseEntity<BookingCustomerResponseDTO> save(@RequestBody String json, @RequestParam String time) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
         BookingCustomerDTO dto = mapper.readValue(json, BookingCustomerDTO.class);
-        return new ResponseEntity<>(bookingCustomerService.save(dto), HttpStatus.OK);
+        return new ResponseEntity<>(bookingCustomerService.save(dto, time), HttpStatus.OK);
     }
     @GetMapping("/findBooking")
     public ResponseEntity<BookingCustomerResponseDTO> findBooking()

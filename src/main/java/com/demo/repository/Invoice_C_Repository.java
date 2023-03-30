@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface Invoice_C_Repository extends JpaRepository<Customer_Invoice, String> {
     @Query
@@ -18,5 +20,4 @@ public interface Invoice_C_Repository extends JpaRepository<Customer_Invoice, St
     @Query
    (value = "update customer_invoice set status = ?1 where id_payment = ?2", nativeQuery = true)
     int updateStatusInvoice(boolean status, String id_payment);
-
 }

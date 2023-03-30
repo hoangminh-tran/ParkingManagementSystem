@@ -1,6 +1,7 @@
 package com.demo.service;
 
 
+import com.demo.utils.request.PaymentCustomerMail;
 import com.demo.utils.response.FeeResponse;
 import com.demo.utils.response.PaymentCustomerReponseDTO;
 import com.demo.utils.response.PaymentResidentResponseDTO;
@@ -12,13 +13,13 @@ public interface MailService {
     String forgot_password(String id_User);
 
 
-    String invoiceCustomer(String id_User, PaymentCustomerReponseDTO dto);
+    String invoiceCustomer(PaymentCustomerMail dto);
 
 
-    String invoiceResident(String id_User, PaymentResidentResponseDTO dto);
+    String invoiceResident(PaymentResidentResponseDTO dto);
 
-    String feeCustomerExpired(String id_User, FeeResponse dto);
+    String feeCustomerExpired(FeeResponse dto);
 
-    String feeResidentExpired(String id_User, FeeResponse dto);
+    String feeResidentExpired(FeeResponse dto);
 }
 

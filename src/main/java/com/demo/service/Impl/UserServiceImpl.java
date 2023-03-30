@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
         dto.setFullname(user.getFullname());
         dto.setPhone(user.getPhone());
         User user1 = userRepository.save(dto);
-        customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(user.getId()).get()));
+        //customerRepository.save(new Customer(dto.getId(), true, userRepository.findById(user.getId()).get()));
         return mapperedToUserResponse(user1);
     }
 
@@ -87,9 +87,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String createUser(UserDTO user){
-        User dto1 = userRepository.findById(user.getId()).orElse(null);
-        if(dto1 != null)
+        User id = userRepository.findCustomerById(user.getId());
+        if(id != null)
         {
+            message = "Customer Username is existed in BD";
             return "Customer Username is existed in BD";
         }
         User dto = new User();
@@ -102,6 +103,7 @@ public class UserServiceImpl implements UserService {
         dto.setPhone(user.getPhone());
         User user1 = userRepository.save(dto);
         customerRepository.save(new Customer(dto.getId(), false, userRepository.findById(user.getId()).get()));
+        message = "Create Customer Successfully";
         return "Create Customer Successfully";
     }
 

@@ -1,7 +1,10 @@
 package com.demo.controller;
 
+import com.demo.entity.Customer_Invoice;
 import com.demo.entity.User;
 import com.demo.repository.Customer_Slot_Repository;
+import com.demo.repository.Invoice_C_Repository;
+import com.demo.repository.UserRepository;
 import com.demo.service.Customer_Slot_Service;
 import com.demo.service.SecurityService;
 import com.demo.service.UserService;
@@ -10,9 +13,11 @@ import com.demo.utils.response.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -183,5 +188,45 @@ public class SecurityController {
     {
         return new ResponseEntity<>(securityService.getResidentBookingHistory(id_Resident), HttpStatus.OK);
     }
+
+    @Autowired
+    UserRepository userRepository;
+
+    @GetMapping("/searchUser")
+    public ResponseEntity<List<User>> search(@RequestParam("typeOfSearch") String typeOfSearch, @RequestParam("value") String value){
+        if(typeOfSearch.toUpperCase().equals("PHONE")){
+            return new ResponseEntity<>(userRepository.findAllByPhone(value), HttpStatus.OK);
+        }
+        if(typeOfSearch.toUpperCase().equals("EMAIL")){
+            return new ResponseEntity<>(userRepository.findAllByEmail(value), HttpStatus.OK);
+        }
+        if(typeOfSearch.toUpperCase().equals("IDUSER")){
+            List<User> list = new ArrayList<>();
+            list.add(userRepository.findById(value).get());
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
+        return null;
+    }
+
+//    @Autowired
+//    Invoice_C_Repository invoiceCRepository;
+//
+//    @GetMapping("/searchInvoice")
+//    public ResponseEntity<List<T>> search(@RequestParam("typeOfSearch") String typeOfSearch, @RequestParam("value") String value){
+//        if(typeOfSearch.toUpperCase().equals("IDINVOICE")){
+//            List<Customer_Invoice> list = invoiceCRepository.findAllById_C_Invoice(value);
+//            Customer_Invoice ci = list.get(0);
+//            return new ResponseEntity<>(, HttpStatus.OK);
+//        }
+//        if(typeOfSearch.toUpperCase().equals("EMAIL")){
+//            return new ResponseEntity<>(userRepository.findAllByEmail(value), HttpStatus.OK);
+//        }
+//        if(typeOfSearch.toUpperCase().equals("IDUSER")){
+//            List<User> list = new ArrayList<>();
+//            list.add(userRepository.findById(value).get());
+//            return new ResponseEntity<>(list, HttpStatus.OK);
+//        }
+//        return null;
+//    }
 }
 

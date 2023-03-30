@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import com.demo.repository.UserRepository;
 import com.demo.service.UserService;
 import com.demo.utils.request.ManagerDTO;
 import com.demo.utils.request.UserDTO;
@@ -19,6 +20,9 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @PostMapping("/save")
     public ResponseEntity<String> createUser(@RequestBody String json) throws JsonProcessingException {

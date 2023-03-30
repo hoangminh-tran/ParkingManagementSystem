@@ -9,7 +9,10 @@ import com.demo.utils.response.PaymentCustomerReponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import static com.demo.entity.Money.*;
 
@@ -106,8 +109,15 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     public static double calculateTotalOfMoney(Customer_Slot customerSlot, Booking bookingInfo)
     {
         //2022-06-20
-        int DD_st = Integer.parseInt((bookingInfo.getStartDate() + "").substring(8, 10));
-        int DD_en = Integer.parseInt((bookingInfo.getEndDate() + "").substring(8, 10));
+        TimeZone vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+        Calendar calendar = Calendar.getInstance(vietnamTimeZone);
+        calendar.setTime(bookingInfo.getStartDate());
+        int MM_st = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+        int DD_st = calendar.get(Calendar.DAY_OF_MONTH);  // Note: Calender.DAY_OF_MONTH is to get the Date of Month
+
+        calendar.setTime(bookingInfo.getEndDate());
+        int MM_en = calendar.get(Calendar.MONTH) + 1;
+        int DD_en = calendar.get(Calendar.DAY_OF_MONTH);
 
         int hh_st = 0, hh_en = 0, mm_st = 0, mm_en = 0;
         if(bookingInfo.getStartTime().length() == 5)
@@ -132,8 +142,31 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
             mm_en = Integer.parseInt(bookingInfo.getEndTime().substring(2, 4));
         }
 
-        if(hh_en == hh_st && mm_en == mm_st) return 0;
-
+        if(hh_en == hh_st && mm_en == mm_st && MM_st == MM_en && DD_st == DD_en) return 0;
+        if(MM_st < MM_en)
+        {
+            boolean check_startMonth_31Days = checkMonthHave31Days(MM_st);
+            boolean check_startEnd_31Days = checkMonthHave31Days(MM_en);
+            if (check_startMonth_31Days && !check_startEnd_31Days) // 03-29    04-01
+            {
+                if(DD_st > DD_en)
+                {
+                    DD_en += 31;
+                }
+            }
+            else if (!check_startMonth_31Days && check_startEnd_31Days) // 04-29      05-01
+            {
+                if(DD_st > DD_en)
+                {
+                    DD_en += 30;
+                }
+            }
+        }
+        if(MM_st > MM_en || (MM_st == MM_en && DD_st > DD_en) || (MM_st == MM_en && DD_st == DD_en && hh_en < hh_st) ||
+                (MM_st == MM_en && DD_st == DD_en && hh_en == hh_st && mm_en < mm_st))
+        {
+            return 0;
+        }
         int day = 0;
         int hour = 0;
         if(DD_st <= DD_en) // 2022-06-15     2022-06-17
@@ -241,5 +274,35 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 break;
         }
         return Total_Of_Money;
+        //return 0;
+    }
+
+    public static boolean checkMonthHave31Days(int mmEn) {
+        boolean ok = false;
+        switch (mmEn)
+        {
+            case 1:
+                ok = true;
+                break;
+            case 3:
+                ok = true;
+                break;
+            case 5:
+                ok = true;
+                 break;
+            case 7:
+                ok = true;
+                break;
+            case 8:
+                ok = true;
+                break;
+            case 10:
+                ok = true;
+                break;
+            case 12:
+                ok = true;
+                break;
+        }
+        return ok;
     }
 }

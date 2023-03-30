@@ -1,6 +1,8 @@
 package com.demo.controller;
+import com.demo.service.CustomerExpiredService;
 import com.demo.service.MailService;
 import com.demo.utils.request.MailDTO;
+import com.demo.utils.request.PaymentCustomerMail;
 import com.demo.utils.response.FeeResponse;
 import com.demo.utils.response.PaymentCustomerReponseDTO;
 import com.demo.utils.response.PaymentResidentResponseDTO;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmailController {
     private final MailService mailService;
 
+    private final CustomerExpiredService customerExpiredService;
 
     @PostMapping("/forgotPassword")
     public ResponseEntity<String> filterRequest(@RequestBody String json) throws JsonProcessingException
@@ -32,44 +35,34 @@ public class EmailController {
     }
 
     @PostMapping("/invoiceCustomer")
-    public ResponseEntity<String> invoiceCustomer(@RequestBody String json, HttpSession session) throws JsonProcessingException
+    public ResponseEntity<String> invoiceCustomer(@RequestBody String json) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        MailDTO dto = mapper.readValue(json, MailDTO.class);
-        PaymentCustomerReponseDTO dto1 =  (PaymentCustomerReponseDTO) session.getAttribute("InvoiceCustomer");
-        System.out.println(dto1);
-        session.removeAttribute("InvoiceCustomer");
-        return new ResponseEntity<>(mailService.invoiceCustomer(dto.getId_User(), dto1) , HttpStatus.OK);
+        PaymentCustomerMail dto = mapper.readValue(json, PaymentCustomerMail.class);
+        return new ResponseEntity<>(mailService.invoiceCustomer(dto) , HttpStatus.OK);
     }
 
-
     @PostMapping("/invoiceResident")
-    public ResponseEntity<String> invoiceResident(@RequestBody String json, HttpSession session) throws JsonProcessingException
+    public ResponseEntity<String> invoiceResident(@RequestBody String json) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        MailDTO dto = mapper.readValue(json, MailDTO.class);
-        PaymentResidentResponseDTO dto1 =  (PaymentResidentResponseDTO) session.getAttribute("InvoiceResident");
-        session.removeAttribute("InvoiceResident");
-        return new ResponseEntity<>(mailService.invoiceResident(dto.getId_User(), dto1) , HttpStatus.OK);
+        PaymentResidentResponseDTO dto = mapper.readValue(json, PaymentResidentResponseDTO.class);
+        return new ResponseEntity<>(mailService.invoiceResident(dto) , HttpStatus.OK);
     }
 
     @PostMapping("/feeCustomerExpired")
-    public ResponseEntity<String> feeCustomerExpired(@RequestBody String json, HttpSession session) throws JsonProcessingException
+    public ResponseEntity<String> feeCustomerExpired(@RequestBody String json) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        MailDTO dto = mapper.readValue(json, MailDTO.class);
-        FeeResponse dto1 =  (FeeResponse) session.getAttribute("FeeCustomerExpired");
-        session.removeAttribute("FeeCustomerExpired");
-        return new ResponseEntity<>(mailService.feeCustomerExpired(dto.getId_User(), dto1) , HttpStatus.OK);
+        FeeResponse dto = mapper.readValue(json, FeeResponse.class);
+        return new ResponseEntity<>(mailService.feeCustomerExpired(dto) , HttpStatus.OK);
     }
 
     @PostMapping("/feeResidentExpired")
-    public ResponseEntity<String> feeResidentExpired(@RequestBody String json, HttpSession session) throws JsonProcessingException
+    public ResponseEntity<String> feeResidentExpired(@RequestBody String json) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        MailDTO dto = mapper.readValue(json, MailDTO.class);
-        FeeResponse dto1 =  (FeeResponse) session.getAttribute("FeeResidentExpired");
-        session.removeAttribute("FeeResidentExpired");
-        return new ResponseEntity<>(mailService.feeResidentExpired(dto.getId_User(), dto1) , HttpStatus.OK);
+        FeeResponse dto = mapper.readValue(json, FeeResponse.class);
+        return new ResponseEntity<>(mailService.feeResidentExpired(dto) , HttpStatus.OK);
     }
 }
