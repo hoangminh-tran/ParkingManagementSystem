@@ -13,8 +13,7 @@ import com.demo.utils.response.CancelBookingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.demo.service.Impl.PaymentCustomerServiceImpl.calculateTotalOfMoney;
 
@@ -56,6 +55,22 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
     @Override
     public BookingCustomerResponseDTO save(BookingCustomerDTO dto, String time) {
 
+        TimeZone vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+        Date current_date = new Date();
+        Calendar calendar = Calendar.getInstance(vietnamTimeZone);
+
+        //xet den ngay do va khoang thoi gian do
+        calendar.setTime(current_date);
+        int current_month = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+        int current_day = calendar.get(Calendar.DAY_OF_MONTH);
+        int current_hours = Integer.parseInt(time.substring(0, time.indexOf('a')));
+
+        calendar.setTime(dto.getStartDate());
+        int start_month = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+        int start_day = calendar.get(Calendar.DAY_OF_MONTH);
+        int start_hour = Integer.parseInt(dto.getStartTime().substring(0, dto.getStartTime().indexOf(':')));
+
+
         Customer customer = customerRepository.findById(dto.getIdUser()).get();
         if(customer.isStatus_Account() == true)
         {
@@ -89,7 +104,11 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
         }
 
         customerSlot.setType_Of_Vehicle(dto.getType_Of_Vehicle());
-        customerSlot.setStatus_Slots(true);
+        //--------------------------------------------------------------------------
+//        if(checkSlotStartDate(current_month, current_day, current_hours, start_month, start_day, start_hour)) // check
+//        {
+//            customerSlot.setStatus_Slots(true); // set khi den ngay startDate biet currentDate de ma xet
+//        }
 
         List<Booking> list = bookingRepository.findAll();
 
@@ -110,6 +129,14 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
                 dto.getId_Building(), dto.getType_Of_Vehicle(), dto.getId_C_Slot(), dto.getStartDate(),
                 dto.getEndDate(), dto.getStartTime(), dto.getEndTime(), Total_of_Money);
         return  bookingCustomerResponseDTO;
+    }
+
+    private boolean checkSlotStartDate(int currMonth,int currDay, int currHour, int startMonth, int startDay, int startHour)
+    {
+        if(currMonth < startMonth) return false;
+        if(currMonth == startMonth && currDay < startDay) return false;
+        if(currMonth == startMonth && currDay == startDay && currHour < startHour) return false;
+        return true;
     }
 
     @Override
