@@ -58,20 +58,19 @@ public class SecurityServiceImpl implements SecurityService {
         List<UserAPI> list = new ArrayList<>();
         Set<String> set = new HashSet<>();
         List<Customer_Slot> customer_slotList = customer_slot_repository.findAllSlotOfEachBuilding(Id_Building);
-        for(Customer_Slot customerSlot : customer_slotList)
-        {
-            Booking booking = bookingRepository.findIdBookingByCustomerSlot(customerSlot.getId_C_Slot(), customerSlot.getArea().getId_Area());
+        for (Customer_Slot customerSlot : customer_slotList) {
+            List<Booking> listBooking = bookingRepository.findAllIdBookingByCustomerSlot(customerSlot.getId_C_Slot(), customerSlot.getArea().getId_Area());
 //            System.out.println(booking);
-            if(booking != null)
-            {
-                User user = userRepository.findById(booking.getCustomer().getIdUser()).get();
-                if(!set.contains(booking.getCustomer().getIdUser()))
-                {
-                    Customer customer = customerRepository.findById(user.getId()).get();
-                    list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
-                            user.getEmail(), user.getPhone(), customer.isStatus_Account()));
+            if (listBooking != null) {
+                for (Booking booking : listBooking) {
+                    User user = userRepository.findById(booking.getCustomer().getIdUser()).get();
+                    if (!set.contains(booking.getCustomer().getIdUser())) {
+                        Customer customer = customerRepository.findById(user.getId()).get();
+                        list.add(new UserAPI(user.getId(), user.getFullname(), user.getPassword(), user.isGender(), user.getDateofbirth(),
+                                user.getEmail(), user.getPhone(), customer.isStatus_Account()));
 //                    System.out.println(user);
-                    set.add(booking.getCustomer().getIdUser());
+                        set.add(booking.getCustomer().getIdUser());
+                    }
                 }
             }
         }

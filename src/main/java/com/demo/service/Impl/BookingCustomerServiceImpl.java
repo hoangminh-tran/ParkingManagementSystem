@@ -97,18 +97,22 @@ public class BookingCustomerServiceImpl implements BookingCustomerService {
             }
         }
         Customer_Slot customerSlot = customer_slot_repository.findCustomerSlot(dto.getId_C_Slot(), dto.getId_Building());
-        if(customerSlot.isStatus_Slots() == true)
+        /*if(customerSlot.isStatus_Slots() == true)
         {
             message = "The Slot is not empty. You cannot book that slot";
             return null;
-        }
+        }*/
 
         customerSlot.setType_Of_Vehicle(dto.getType_Of_Vehicle());
         //--------------------------------------------------------------------------
-//        if(checkSlotStartDate(current_month, current_day, current_hours, start_month, start_day, start_hour)) // check
-//        {
-//            customerSlot.setStatus_Slots(true); // set khi den ngay startDate biet currentDate de ma xet
-//        }
+        if(checkSlotStartDate(current_month, current_day, current_hours, start_month, start_day, start_hour)) // check
+        {
+            customerSlot.setStatus_Slots(true);
+            message = "The Slot is not empty. You cannot book that slot";
+            return null;
+        } else {
+            customerSlot.setStatus_Slots(false);
+        }
 
         List<Booking> list = bookingRepository.findAll();
 

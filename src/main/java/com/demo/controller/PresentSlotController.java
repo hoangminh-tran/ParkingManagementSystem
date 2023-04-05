@@ -29,4 +29,10 @@ public class PresentSlotController {
         DateDTO dto = mapper.readValue(json, DateDTO.class);
         return new ResponseEntity<>(presentSlotOfEachBuilding.findAll(Id_Building, dto) , HttpStatus.OK);
     }
+
+    @GetMapping("/findAllSlot/{Id_Building}")
+    public ResponseEntity<List<PresentSlotResponseDto>>present_slot(@PathVariable("Id_Building") String Id_Building)
+    {
+        return new ResponseEntity<>(presentSlotOfEachBuilding.findAllSlot(Id_Building) , HttpStatus.OK);
+    }
 }

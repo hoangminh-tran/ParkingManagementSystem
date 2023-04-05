@@ -38,5 +38,11 @@ public interface Customer_Slot_Repository extends JpaRepository<Customer_Slot, L
     )
     List<Customer_Slot> findCustomerSlotWithBooking();
 
+    @Query(
+            value = "select c.* from booking b join customer_slot c on b.id_index = c.id_index\n" +
+                    "where b.id_booking = ?1 && c.id_c_slot = ?2", nativeQuery = true
+    )
+    Customer_Slot findCustomerSlotByIdBooking_1(Long id_booking, String slot);
+
 
 }

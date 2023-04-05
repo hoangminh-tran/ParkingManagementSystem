@@ -1,23 +1,197 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: fit-content;
+    }
+
+    td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #2dc98a;
+    }
+
+    h1{
+        text-align: center;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        color: #2dc98a;
+        font-weight: bolder;
+        border-bottom: 1px solid #2dc98a;
+    }
+</style>
+
 <body>
-<p style="text-align: center" th:text = "'Id_User: ' + ${Id_User}"/>
-<p style="text-align: center" th:text = "'id_invoice: ' + ${id_invoice}"/>
-<p style="text-align: center" th:text = "'status_fee: ' + ${status_fee}"/>
-<p style="text-align: center" th:text = "'current_date: ' + ${current_date}"/>
-<p style="text-align: center" th:text = "'current_time: ' + ${current_time}"/>
-<p style="text-align: center" th:text = "'end_date: ' + ${end_date}"/>
-<p style="text-align: center" th:text = "'end_time: ' + ${end_time}"/>
-<p style="text-align: center" th:text = "'expired: ' + ${expired}"/>
-<p style="text-align: center" th:text = "'based_fee: ' + ${based_fee}"/>
-<p style="text-align: center" th:text = "'fined_fee: ' + ${fined_fee}"/>
-<p style="text-align: center" th:text = "'warning: ' + ${warning}"/>
-<p style="text-align: center" th:text = "'sum: ' + ${sum}"/>
-<p style="text-align: center" th:text = "'has_paid: ' + ${has_paid}"/>
-<p style="text-align: center" th:text = "'total_fee: ' + ${total_fee}"/>
+<h1> Mail Fee Customer Expired </h1>
+<table>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'Id_User: ' + ${Id_User}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'id_invoice: ' + ${id_invoice}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'status_fee: ' + ${status_fee}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'current_date: ' + ${current_date}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'current_time: ' + ${current_time}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'end_date: ' + ${end_date}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'end_time: ' + ${end_time}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'expired: ' + ${expired}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'based_fee: ' + ${based_fee}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'fined_fee: ' + ${fined_fee}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'warning: ' + ${warning}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'sum: ' + ${sum}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'has_paid: ' + ${has_paid}" />
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="text-align: center" th:text="'total_fee: ' + ${total_fee}" />
+
+        </td>
+    </tr>
+</table>
+<!-- <table>
+    <tr>
+        <td>
+            <p>Id_User: lamtruong2</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>id_invoice: IC16</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>status_fee: true</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>current_date: Thu Mar 30 14:33:43 UTC 2023</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>current_time: 21:33</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>end_date: 2023-03-28</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>end_time: 17:00</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>expired: 52</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>based_fee: 455000.0
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>fined_fee: 390000.0</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>warning: true</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>sum: 845000.0</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>has_paid: 455000.0</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>total_fee: 390000.0</p>
+        </td>
+    </tr>
+</table> -->
 </body>
+
 </html>

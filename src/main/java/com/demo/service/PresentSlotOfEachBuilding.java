@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PresentSlotOfEachBuilding {
     List<PresentSlotResponseDto> findAll(String id_Building, DateDTO dto);
+    List<PresentSlotResponseDto> findAllSlot(String id_Building);
+
 }

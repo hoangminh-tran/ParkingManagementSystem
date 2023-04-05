@@ -35,19 +35,34 @@ public class PresentSlotOfEachBuildingImpl implements PresentSlotOfEachBuilding 
     AreaRepository areaRepository;
 
     @Override
+    public List<PresentSlotResponseDto> findAllSlot(String id_Building) {
+        List<PresentSlotResponseDto> list = new ArrayList<>();
+        List<Customer_Slot> listCustomerSlot = customer_slot_repository.findAllSlotOfEachBuilding(id_Building);
+        List<Resident_Slot> listResidentSlot = resident_slot_repository.findAllSlotOfEachBuilding(id_Building);
+        for (int i = 0; i < listCustomerSlot.size(); i++) {
+            Customer_Slot customerSlot = listCustomerSlot.get(i);
+            list.add(new PresentSlotResponseDto(customerSlot.getId_C_Slot(), id_Building, customerSlot.isStatus_Slots()));
+        }
+        for (int i = 0; i < listResidentSlot.size(); i++) {
+            Resident_Slot residentSlot = listResidentSlot.get(i);
+            list.add(new PresentSlotResponseDto(residentSlot.getId_R_Slot(), id_Building, residentSlot.isStatus_Slots()));
+        }
+        return list;
+    }
+    @Override
     public List<PresentSlotResponseDto> findAll(String id_Building, DateDTO dto) {
         List<PresentSlotResponseDto> list = new ArrayList<>();
         List<Customer_Slot> listCustomerSlot = customer_slot_repository.findAllSlotOfEachBuilding(id_Building);
         List<Resident_Slot> listResidentSlot = resident_slot_repository.findAllSlotOfEachBuilding(id_Building);
         for (int i = 0; i < listCustomerSlot.size(); i++) {
             Customer_Slot customerSlot = listCustomerSlot.get(i);
-            if (checkSlotisEmpty(dto, customerSlot))
+            if (checkSlotisEmpty(dto, customerSlot) == false)
             // dto thong tin FE gui xuong chua Real Time, Booking Date cua new Customer
             // Duyet het tat ca book de coi booking
             {
-                customerSlot.setStatus_Slots(false);
+                customerSlot.setStatus_Slots(true);
             }
-            else customerSlot.setStatus_Slots(true);
+            else customerSlot.setStatus_Slots(false);
             list.add(new PresentSlotResponseDto(customerSlot.getId_C_Slot(), id_Building, customerSlot.isStatus_Slots()));
         }
         for (int i = 0; i < listResidentSlot.size(); i++) {
@@ -57,107 +72,114 @@ public class PresentSlotOfEachBuildingImpl implements PresentSlotOfEachBuilding 
         return list;
     }
 
+
+
     private boolean checkSlotisEmpty(DateDTO dto, Customer_Slot customerSlot) {
         List<Booking> bookingList = bookingRepository.findAll();
         for (Booking booking : bookingList) {
-            if (booking.is_deleted() == false && booking.is_enabled() == true) {
-                Customer_Slot slot = customer_slot_repository.findCustomerSlotByIdBooking(booking.getId_Booking());
+            Customer_Slot slot = booking.getCustomer_slot();
+            if (booking.is_deleted() == false && booking.is_enabled() == true && slot.getId_C_Slot() == customerSlot.getId_C_Slot())
+            {
+//                    System.out.println(slot.getId_C_Slot());
+                    TimeZone vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+                    Calendar calendar = Calendar.getInstance(vietnamTimeZone);
 
-                TimeZone vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
-                Calendar calendar = Calendar.getInstance(vietnamTimeZone);
+                    //xet thong tin tu FE xet dto
+                    calendar.setTime(dto.getStartDate());
+                    int dto_month_start = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+                    calendar.setTime(dto.getEndDate());
+                    int dto_month_end = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+                    calendar.setTime(dto.getStartDate());
+                    int dto_day_start = calendar.get(Calendar.DAY_OF_MONTH);
+                    calendar.setTime(dto.getEndDate());
+                    int dto_day_end = calendar.get(Calendar.DAY_OF_MONTH);
+                    int dto_hh_st = Integer.parseInt(dto.getStartTime().substring(0, dto.getStartTime().indexOf(':')));
+                    int dto_hh_en = Integer.parseInt(dto.getEndTime().substring(0, dto.getEndTime().indexOf(':')));
 
-                //xet thong tin tu FE xet dto
-                calendar.setTime(dto.getStartDate());
-                int dto_month_start = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
-                calendar.setTime(dto.getEndDate());
-                int dto_month_end = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
-                calendar.setTime(dto.getStartDate());
-                int dto_day_start = calendar.get(Calendar.DAY_OF_MONTH);
-                calendar.setTime(dto.getEndDate());
-                int dto_day_end = calendar.get(Calendar.DAY_OF_MONTH);
-                int dto_hh_st = Integer.parseInt(dto.getStartTime().substring(0, dto.getStartTime().indexOf(':')));
-                int dto_hh_en = Integer.parseInt(dto.getEndTime().substring(0, dto.getEndTime().indexOf(':')));
-
-                //Day la Real time tu FE gui xuong
-                int dto_hours = Integer.parseInt(dto.getTime().substring(0, dto.getTime().indexOf('a')));
-
-           //     log.info(dto_month_start + " " + dto_month_end +  " " + dto_day_start + " " + dto_day_end + " " + dto_hh_st + " " + dto_hh_en);
+                    //Day la Real time tu FE gui xuong
+                    int dto_hours = Integer.parseInt(dto.getTime().substring(0, dto.getTime().indexOf('a')));
 
 
-                //Day la thoi gian va Date lay trong DB ra
-                calendar.setTime(booking.getStartDate());
-                int bk_month_start = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
-                calendar.setTime(booking.getEndDate());
-                int bk_month_end = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
-                calendar.setTime(booking.getStartDate());
-                int bk_day_start = calendar.get(Calendar.DAY_OF_MONTH);
-                calendar.setTime(booking.getEndDate());
-                int bk_day_end = calendar.get(Calendar.DAY_OF_MONTH);
-                int bk_hh_st = Integer.parseInt(booking.getStartTime().substring(0, dto.getStartTime().indexOf(':')));
-                int bk_hh_en = Integer.parseInt(booking.getEndTime().substring(0, dto.getEndTime().indexOf(':')));
+                    //Day la thoi gian va Date lay trong DB ra
+                    calendar.setTime(booking.getStartDate());
+                    int bk_month_start = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+                    calendar.setTime(booking.getEndDate());
+                    int bk_month_end = calendar.get(Calendar.MONTH) + 1; // Note: Calendar.MONTH is zero-based, so add 1
+                    calendar.setTime(booking.getStartDate());
+                    int bk_day_start = calendar.get(Calendar.DAY_OF_MONTH);
+                    calendar.setTime(booking.getEndDate());
+                    int bk_day_end = calendar.get(Calendar.DAY_OF_MONTH);
+                    int bk_hh_st = Integer.parseInt(booking.getStartTime().substring(0, dto.getStartTime().indexOf(':')));
+                    int bk_hh_en = Integer.parseInt(booking.getEndTime().substring(0, dto.getEndTime().indexOf(':')));
+                    ;
+//                    log.info(bk_month_start + " " + bk_month_end + " " + dto_month_start + " " + dto_month_end);
+//                    log.info(bk_day_start + " " + bk_day_end + " " + dto_day_start + " " + dto_day_end);
+//                    log.info(bk_hh_st + " " + bk_hh_en + " " + dto_hh_st + " " + dto_hh_en);
+                    // TH1
+                    if (
+                            (
+                                    (bk_month_end > dto_month_end) ||
+                                            (bk_month_end == dto_month_end && bk_day_end > dto_day_end) ||
+                                            (bk_month_end == dto_month_end && bk_day_end == dto_day_end && bk_hh_en >= dto_hh_en))
+                                    &&
+                                    (
+                                            (bk_month_start < dto_month_end) ||
+                                                    (bk_month_start == dto_month_end && bk_day_start < dto_day_end) ||
+                                                    (bk_month_start == dto_month_end && bk_day_start == dto_day_end && bk_hh_st <= dto_hh_en))
+                    ) {
+                        //System.out.println("TH1");
+                        return false;
+                    }
 
-//                log.info(bk_month_start + " " + bk_month_end +  " " + bk_day_start + " " + bk_day_end + " " + bk_hh_st + " " + bk_hh_en);
-                // TH1
-                if (
-                        (
-                                bk_month_end >= dto_month_end ||
-                                        bk_month_end == dto_month_end && bk_day_end >= dto_day_end ||
-                                        bk_month_end == dto_month_end && bk_day_end == dto_day_end && bk_hh_en >= dto_hh_en)
-                                &&
-                                (
-                                        bk_month_start <= dto_month_end ||
-                                                bk_month_start == dto_month_end && bk_day_start <= dto_day_end ||
-                                                bk_month_start == dto_month_end && bk_day_start == dto_day_end && bk_hh_st <= dto_hh_en)
-                ) {
-                    return true;
-                }
+                    //TH2
+                    if (
+                            (
+                                    (bk_month_end > dto_month_start) ||
+                                            (bk_month_end == dto_month_start && bk_day_end > dto_day_start) ||
+                                            (bk_month_end == dto_month_start && bk_day_end == dto_day_start && bk_hh_en >= dto_hh_st))
+                                    &&
+                                    (
+                                            (bk_month_start < dto_month_start) ||
+                                                    (bk_month_start == dto_month_start && bk_day_start < dto_day_start) ||
+                                                            (bk_month_start == dto_month_start && bk_day_start == dto_day_start && bk_hh_st <= dto_hh_st))
+                    ) {
+                        //System.out.println("TH2");
+                        return false;
+                    }
 
-                //TH2
-                if (
-                        (
-                                bk_month_end >= dto_month_start ||
-                                        bk_month_end == dto_month_start && bk_day_end >= dto_day_start ||
-                                        bk_month_end == dto_month_start && bk_day_end == dto_day_start && bk_hh_en >= dto_hh_st)
-                                &&
-                                (
-                                        bk_month_start <= dto_month_start ||
-                                                bk_month_start == dto_month_start && bk_day_start <= dto_day_start ||
-                                                bk_month_start == dto_month_start && bk_day_start == dto_day_start && bk_hh_st <= dto_hh_st)
-                ) {
-                    return true;
-                }
+                    //TH3
+                    if (
+                            (
+                                    (bk_month_end > dto_month_end) ||
+                                            (bk_month_end == dto_month_end && bk_day_end > dto_day_end) ||
+                                                    (bk_month_end == dto_month_end && bk_day_end == dto_day_end && bk_hh_en >= dto_hh_en))
+                                    &&
+                                    (
+                                            (bk_month_start < dto_month_start) ||
+                                                    (bk_month_start == dto_month_start && bk_day_start < dto_day_start) ||
+                                                    (bk_month_start == dto_month_start && bk_day_start == dto_day_start && bk_hh_st <= dto_hh_st))
+                    ) {
+                        //System.out.println("TH3");
+                        return false;
+                    }
 
-                //TH3
-                if (
-                        (
-                                bk_month_end >= dto_month_end ||
-                                        bk_month_end == dto_month_end && bk_day_end >= dto_day_end ||
-                                        bk_month_end == dto_month_end && bk_day_end == dto_day_end && bk_hh_en >= dto_hh_en)
-                                &&
-                                (
-                                        bk_month_start <= dto_month_start ||
-                                                bk_month_start == dto_month_start && bk_day_start <= dto_day_start ||
-                                                bk_month_start == dto_month_start && bk_day_start == dto_day_start && bk_hh_st <= dto_hh_st)
-                ) {
-                    return true;
-                }
-
-                //TH4
-                if (
-                        (
-                                bk_month_end <= dto_month_end ||
-                                        bk_month_end == dto_month_end && bk_day_end <= dto_day_end ||
-                                        bk_month_end == dto_month_end && bk_day_end == dto_day_end && bk_hh_en <= dto_hh_en)
-                                &&
-                                (
-                                        bk_month_start >= dto_month_start ||
-                                                bk_month_start == dto_month_start && bk_day_start >= dto_day_start ||
-                                                bk_month_start == dto_month_start && bk_day_start == dto_day_start && bk_hh_st >= dto_hh_st)
-                ) {
-                    return true;
-                }
+                    //TH4
+                    if (
+                            (
+                                    (bk_month_end < dto_month_end) ||
+                                            (bk_month_end == dto_month_end && bk_day_end < dto_day_end) ||
+                                            (bk_month_end == dto_month_end && bk_day_end == dto_day_end && bk_hh_en <= dto_hh_en))
+                                    &&
+                                    (
+                                            (bk_month_start > dto_month_start) ||
+                                                    (bk_month_start == dto_month_start && bk_day_start > dto_day_start) ||
+                                                    (bk_month_start == dto_month_start && bk_day_start == dto_day_start && bk_hh_st >= dto_hh_st))
+                    ) {
+                        //System.out.println("TH4");
+                        return false;
+                    }
             }
         }
-        return false;
+        return true;
     }
 }

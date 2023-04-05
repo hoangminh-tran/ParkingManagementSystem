@@ -1,21 +1,106 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
-<body>
-<p style="text-align: center" th:text = "'Id_C_Invoice: ' + ${Id_C_Invoice}"/>
-<p style="text-align: center" th:text = "'Status Invoice: ' + ${Status_Invoice}"/>
-<p style="text-align: center" th:text = "'Id_Payment: ' + ${Id_Payment}"/>
-<p style="text-align: center" th:text = "'Total Of Money: ' + ${total_of_money}"/>
-<p style="text-align: center" th:text = "'Type Of Payment: ' + ${Type_Of_Payment}"/>
-<p style="text-align: center" th:text = "'startDate: ' + ${startDate}"/>
-<p style="text-align: center" th:text = "'endDate: ' + ${endDate}"/>
-<p style="text-align: center" th:text = "'startTime: ' + ${startTime}"/>
-<p style="text-align: center" th:text = "'endTime: ' + ${endTime}"/>
-<p style="text-align: center" th:text = "'Id_Booking: ' + ${Id_Booking}"/>
-<p style="text-align: center" th:text = "'id_C_Slot: ' + ${id_C_Slot}"/>
-</body>
-</html>
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: fit-content;
+  }
 
+  td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #2dc98a;
+  }
+
+  h1 {
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #2dc98a;
+    font-weight: bolder;
+    border-bottom: 1px solid #2dc98a;
+  }
+</style>
+
+<body>
+<h1>Mail Invoice Customer</h1>
+<table>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Id_C_Invoice: ' + ${Id_C_Invoice}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Status Invoice: ' + ${Status_Invoice}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Id_Payment: ' + ${Id_Payment}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Total Of Money: ' + ${total_of_money}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Type Of Payment: ' + ${Type_Of_Payment}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'startDate: ' + ${startDate}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'endDate: ' + ${endDate}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p style="text-align: center" th:text="'startTime: ' + ${startTime}" />
+
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'endTime: ' + ${endTime}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Id_Booking: ' + ${Id_Booking}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'id_C_Slot: ' + ${id_C_Slot}" />
+    </td>
+  </tr>
+</table>
+</body>
+
+</html>

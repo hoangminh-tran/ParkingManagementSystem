@@ -1,15 +1,76 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: fit-content;
+  }
+
+  td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #2dc98a;
+  }
+
+  h1 {
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #2dc98a;
+    font-weight: bolder;
+    border-bottom: 1px solid #2dc98a;
+  }
+</style>
+
 <body>
-<p style="text-align: center" th:text = "'Id_R_Invoice: ' + ${Id_R_Invoice}"/>
-<p style="text-align: center" th:text = "'Status Invoice: ' + ${Status_Invoice}"/>
-<p style="text-align: center" th:text = "'Id_Payment: ' + ${Id_Payment}"/>
-<p style="text-align: center" th:text = "'Total Of Money: ' + ${Total_of_money}"/>
-<p style="text-align: center" th:text = "'Type Of Payment: ' + ${Type_Of_Payment}"/>
-<p style="text-align: center" th:text = "'Date Of Payment: ' + ${Date_Of_Payment}"/>
+<h1>Mail Invoice Resident</h1>
+<table>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Id_R_Invoice: ' + ${Id_R_Invoice}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Status Invoice: ' + ${Status_Invoice}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Id_Payment: ' + ${Id_Payment}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Total Of Money: ' + ${Total_of_money}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Type Of Payment: ' + ${Type_Of_Payment}" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+      <p style="text-align: center" th:text="'Date Of Payment: ' + ${Date_Of_Payment}" />
+    </td>
+  </tr>
+</table>
 </body>
+
 </html>

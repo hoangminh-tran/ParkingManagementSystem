@@ -19,6 +19,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     Booking findIdBookingByCustomerSlot(String id_C_Slot, Long id_Area);
 
+    @Query(
+            value = "select b.* from booking b join customer_slot c on b.id_index = c.id_index\n" +
+                    "where c.id_c_slot = ?1 and c.id_area = ?2 and b.is_deleted = 0 and b.is_enabled = 1 and b.is_checkout = 0", nativeQuery = true
+    )
+    List<Booking> findAllIdBookingByCustomerSlot(String id_C_Slot, Long id_Area);
+    
     @Query
     (value = "select b.* from booking b join payment_c pc on b.id_booking = pc.id_booking " +
             "where pc.id_payment = ?1 and b.is_deleted = 0 and b.is_enabled = 1 and b.is_checkout = 0", nativeQuery = true)
